@@ -128106,7 +128106,7 @@ end
 end
 end
 function ZeusMod:ExcludePersistance(e)
-e:excludeFromBirthList("ZEUS")
+e:AddToBirthExclude("ZEUS")
 end
 end
 env.info("Zeus load",false)
@@ -132620,6 +132620,9 @@ env.info("load dead unit",false)
 local t=0
 local e=0
 dofile(self.DeadUnitsSaveFile)
+if PWS_MarkSimpleNumber==nil then PWS_MarkSimpleNumber=0 end
+if PWS_MarkNumber==nil then PWS_MarkNumber=16000 end
+if PWS_Units==nil then PWS_Units={}end
 self.PWS_Units=PWS_Units
 if self.doSaveMark and self:file_exists(self.RecoMarkSaveFile)then
 env.info("load reco mark",false)
@@ -133887,7 +133890,7 @@ end
 end
 GroundArtillery={}
 do
-function GroundArtillery:new()
+function GroundArtillery:New()
 local e={}
 setmetatable(e,{__index=self})
 e.groupUnits={}
@@ -135229,7 +135232,7 @@ end
 end
 IABlue={}
 do
-function IABlue:new(t)
+function IABlue:New(t)
 local e={}
 setmetatable(e,{__index=self})
 e.base={}
@@ -137070,7 +137073,7 @@ end
 end
 Menu={}
 do
-function Menu:new(t)
+function Menu:New(t)
 local e={}
 setmetatable(e,{__index=self})
 e.index=0
@@ -137364,7 +137367,6 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info("load all",false)
 CTLDSpawn={}
 do
 function CTLDSpawn:New()
@@ -137432,4 +137434,4 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info('DCSSimplifyMission load', false)
+env.info('DCSSimplifyMission load (' .. tostring('1.0.7') .. ')', false)
