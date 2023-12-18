@@ -11,7 +11,7 @@ DSM se décompose en 2 scripts à charger : le premier (DCSSimplifyMission) cont
 Charger le script DCSSimplifyMission.lua en déclenchement unique sur un temps supérieur à 1s.
 Charger ensuite votre script de mission sur un second déclencheur à 10s.
 
-## Unités requises au niveau de l'éditeur
+## Unités requises au niveau de l'éditeur  {#editeur}
 
 Il est nécessaire d'ajouter des unités en activation retardées au niveau de l'éditeur et de respecter la syntaxe pour le nom du groupe. Ces groupes seront utilisés pour faire spawn les unités aériennes, au sol et des systèmes de capture : 
 
@@ -26,7 +26,7 @@ Au délà de ces unités obligatoires, il sera nécessaire d'en ajouter (toujour
 ## Principes génériques du script Mission
 
 Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMission doit juste être chargé). Différents modules peuvent être utilisés, certains sont indépendants : ils contiennent une fonction Init().  D'autres modules ne sont qu'une description et doivent être utilisés via d'autres modules plus larges. 
-
+Les différents modules sont décrits ci-après, tant au niveau du gameplay que pour leur utilisation (au sens 'utilisation dans le script de mission').
 
 
 ## Descriptions des différents modules
@@ -44,7 +44,7 @@ Ce module gère la persistance, c'est-à-dire la sauvegarde des unités détruit
  - Initialisation : `peristance:Init()` : tant que cette ligne n'est pas appelée, la persistance ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
 
 #### Options supplémentaires
-La class PWS fournit d'autres functions qui vous permet d'ajuster certaines paramètres si besoin. 
+La class PWS fournit d'autres functions qui vous permet d'ajuster certains paramètres si besoin. 
 
 #### Temps entre 2 sauvegardes
 Par défaut la sauvegarde se faut toutes les 5 min, il est possible de modifier cette durée via la function `:SetSaveSchedule(temps_en_seconde)`
@@ -102,7 +102,7 @@ Ce système permet d'ajouter des marqueurs en vue F10 avec le type et les coordo
 
 #### Options supplémentaires
 
-La class ReconClass fournie d'autres functions qui vous permet d'ajuster certaines paramètres si besoin. 
+La class ReconClass fournit d'autres functions qui vous permet d'ajuster certains paramètres si besoin. 
 
 ##### Ajouter des appareils
 
@@ -150,6 +150,22 @@ Par défaut les unités ayant les termes suivants dans leur noms ne sont pas ide
 	"red_"
 
 Il est possible d'ajouter des exceptions via la function `:AddException(Nom_a_retirer)` 
+
+### Splash Damage (class SplashDamageClass)
+Cette fonction est une réécriture en POO et une adaptation du script splash_damage (https://github.com/spencershepard/DCS-Scripts/blob/master/Splash_Damage_2_0.lua) qui permet de simuler l'effet de souffle d'une bombe à son impacte, ce qui augmente l'intérêt pour l'ututlisation des bombes lisses.
+
+#### Utilisation
+  - Constructeur : `local splash = SplashDamageClass:New()`
+  - Initialisation : `splash:Init()` : tant que cette ligne n'est pas appelée, le splash damage ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
+    
+#### Options supplémentaires
+
+##### Modifier le niveau de l'effet de souffle d'un armement
+Via la fonction `:SetWeaponConfig(weaponName, weaponValue)` il est possible d'ajouter ou de modifier la configuration d'un armement. Le premier paramètre correspond au nom de l'arme dans DCS (exemple une GBU12 : GBU_12), le second paramètre correspond à la puissance de l'effet de souffle. 
+Par comparaison, par défaut une mk82 à une valeure de 118 alors qu'une mk84 est à 582
+
+##### Modifier les options du script original
+Le script initial vient avec plusieurs configuration qu'il est possible de changer via `:ChangeOption(optionName, optionValue)`
 
 ### Tacan
 
@@ -204,5 +220,31 @@ Il est possible d'ajouter des exceptions via la function `:AddException(Nom_a_re
 
 
 ### Menu Communication
+
+
+### Mode Zeus (class ZeusMod)
+Il est possible d'ajouter un mod Zeus qui vous permettra de faire spawn des unités au sol comme des SAM, des tanks, des convois ou même des FOB entières rendant le jeu plus dynamique. 
+Ce mod peut aussi être utilisé seul dans un script mission ce qui vous permet d'avoir en 2 lignes une mission d'entrainement. 
+
+#### Utilisation
+  - Constructeur : `local Zeus = ZeusMod:New('MOOSERED')` : Le constructeur prend en paramètre le nom de l'unité dans l'éditeur qui lui servira d'encrage. Cette unité doit être en activation retardée (voir #editeur) 
+  - Initialisation : `Zeus:Init()` : tant que cette ligne n'est pas appelée, Zeus ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
+  - Obligatoire pour autoriser son utilisation : `Zeus:Allow()` : par défaut et même avec la fonction :Init(), le mode Zeus n'est pas fonctionnel, cela permet de donner un niveau supplémentaire pour activer ou non le module.
+
+#### Options supplémentaires
+La class ZeusMod fournit d'autres functions qui vous permet d'ajuster certains paramètres si besoin. 
+
+##### Ajouter un mot de passe
+Afin d'éviter l'utilisation du mod par n'importe qui, il est possible de mettre un mot de passe via `:UsePassword(mdp)`, à noter qu'une fois le mot de passe saisie, n'importe qui peut utiliser les commandes
+
+##### Exclure les unités qui spawnent de la sauvegarde (via la persistance)
+Afin d'éviter une sauvegarde des unités via le script de persistance, il faut utiliser la fonction `:ExcludePersistance(PWS)` avec la variable liée à la class PWS (Persistance donc les exemples ici)
+
+#### Utilisation In Game
+Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici https://github.com/docbrownd/DCSSymplifyMission/edit/master/ZeusReadme.md
+
+	
+
+    
 
 
