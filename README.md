@@ -34,14 +34,15 @@ Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMiss
 ### Persistance (class PWS)
 Ce module gère la persistance, c'est-à-dire la sauvegarde des unités détruites, des unités spawned ainsi que les marqueurs liés à la reconnaissance. Comme souvent cela ne marche que si vous mettiez en commentaire (ajout de -- avant les lignes) les lignes suivantes dans Eagle Dynamics\DCS World OpenBeta\Scripts\MissionScripting.lua : 
 `
-    sanitizeModule('os')
-	sanitizeModule('io')
-	sanitizeModule('lfs')
+    sanitizeModule('os')\
+	sanitizeModule('io')\
+	sanitizeModule('lfs')\
 `
 
 #### Utilisation
  - Constructeur : `local peristance = PWS:New("Fichier")` : le texte passé en paramètre correspond au préfix des fichiers de sauvegarde. Ici les fichiers seront nommés : Fichier_PWS_Units.lua, Fichier_PWS_Spawned.lua, Fichier_PWS_Statics.lua, Fichier_PWS_MarkReco.lua (respectivement pour les unités détruites, spawned, les static et la reconnaissance. Les fichiers seront sauvés dans le dossier Missions/_PWS_Saves)
- - Initialisation : `peristance:Init()` : tant que cette ligne n'est pas appelée, la persistance ne foncitonnera pas
+ - Initialisation : `peristance:Init()` : tant que cette ligne n'est pas appelée, la persistance ne fonctionnera pas. 
+ - 
 
 ### Reconnaissance 
 
