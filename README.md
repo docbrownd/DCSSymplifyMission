@@ -366,7 +366,7 @@ La class ZeusMod fournit d'autres functions qui vous permet d'ajuster certains p
 Afin d'éviter l'utilisation du mod par n'importe qui, il est possible de mettre un mot de passe via `:UsePassword(mdp)`, à noter qu'une fois le mot de passe saisie, n'importe qui peut utiliser les commandes
 
 ##### Exclure les unités qui spawnent de la sauvegarde (via la persistance)
-Afin d'éviter une sauvegarde des unités via le script de persistance, il faut utiliser la fonction `:ExcludePersistance(PWS)` avec la variable liée à la class PWS (Persistance donc les exemples ici)
+Afin d'éviter une sauvegarde des unités via le script de persistance, il faut utiliser la fonction `:ExcludePersistance(PWS)` avec la variable liée à la class PWS ('Persistance' donc dans les exemples ici)
 
 ##### Afficher un menu de comm dédié
 Certaines fonctions du mode Zeus peuvent être utilisées plus facilement via le menu comm, toutefois ce type de menu est incompatible avec les missions classiques, il est donc désactivé par défaut. Pour l'activer il faut utiliser la fonction `:AllowMenu()`
