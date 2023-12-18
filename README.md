@@ -318,6 +318,9 @@ Afin d'éviter l'utilisation du mod par n'importe qui, il est possible de mettre
 ##### Exclure les unités qui spawnent de la sauvegarde (via la persistance)
 Afin d'éviter une sauvegarde des unités via le script de persistance, il faut utiliser la fonction `:ExcludePersistance(PWS)` avec la variable liée à la class PWS (Persistance donc les exemples ici)
 
+##### Afficher un menu de comm dédié
+Certaines fonctions du mode Zeus peuvent être utilisées plus facilement via le menu comm, toutefois ce type de menu est incompatible avec les missions classiques, il est donc désactivé par défaut. Pour l'activer il faut utiliser la fonction `:AllowMenu()`
+
 #### Utilisation In Game
 Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici [ZeusReadme](./ZeusReadme.md)
 
