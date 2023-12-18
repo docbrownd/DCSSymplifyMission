@@ -2,7 +2,7 @@
 
 ## Description
 
-DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore.
+DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore. Le code est encore perfectible avec quelques redondances mais il est suffisamment stable pour êter publié. Il est actuellement utilisé pour faire tourner la mission Sinai des serveurs public Couteau et privé Ghost
 
 DSM se décompose en 2 scripts à charger : le premier (DCSSimplifyMission) contient l'ensemble des class (dont Moose et Mist) qui peuvent être utilisées, le second correspond à la mission en elle-même. 
 L'ensemble des options disponibles sont décrits ci-après, et un exemple d'un script Mission (pour la map Sinai) est disponible dans le dossier /example (il peut être plus facile dans un premier temps de regarder le script).
@@ -269,15 +269,61 @@ Ce système utilise les fonctions suivantes :
 
 
 
-### Reaper 
+### Reaper (class Reaper)
+Il est possible d'ajouter 2 types de drones sur une mission, tout deux seront appelés via le menu communication et apparaitront au niveau d'une base. Ces types de drones diffèrent par leur mission : le premier drone devra être contacté pour avoir des informations sur une cible (mode AFAC), le second scannera la zone est lasera automatiquement les cibles (avec un visuel via fumigène). Les deux drones sont codés via la class Reaper, le drone avec autolase a simplement quelques options en plus.
 
 #### Reaper classique
+  - Constructeur : `local MQ9 = Reaper:New()`
+  - `MQ9:SetZones(menuComm)` : cette fonction permet de définir la strcuture du menu comm "MQ-9 Reaper". menuComm doit contenir un premier niveau de Menu (peu importe le nom) et un second qui sera constituer du nom des bases où le drone sera dirigé.
+    Exemple :
+ `
+local menuComm = {
+    ["Israel"] = {
+        "Hatzerim",
+        "Kedem",
+        "Nevatim",
+        "Ovda",
+        "Ramon Airbase"
+    },
+    ["Est Egypte"] = {
+        "Abu Rudeis", "El Arish", "Melez", "St Catherine", "El Gora"
+    },
+    ["Ouest Egypte"] = {
+        "Al Mansurah", "Cairo West", "Cairo International Airport","Fayed", "Wadi al Jandali"
+    }
+}
+ `
+    
+  - Initialisation : `MQ9:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
+
+##### Options supplémentaires 
+ - `:SetStartFrequency(272)` : indique à partir de quelle fréquence chaque drone doit être contacté. Le drone n°1 sera sur cette fréquence, le n°2 sur la fréqeunce 272+1, etc
+ - `:NumberMax(nbr)` : par défaut il est possible d'appeler jusqu'à 8 drones. Cette fonction permet de modifier le nombre (ne pas dépasser 10 pour des raisons d'affichage dans le menu comm)
+
 
 #### Reaper avec autolase
+Le drone avec autolase a les meme options que le drone classique, sauf qu'il n'est pas nécessaire de la contacter et qu'il a 2 functions supllémentaires pour le lasing : 
+ - `:SetStartLaserCode(1681)` : indique la valeur du laser du drone n°1, le second aura +1, le 3eme +2, etc. Attention à bien choisir entre le nombre de drone et les codes autorisés.
+ - `:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30})` : décrit la misison du drone : state doit être à true pour que le drone fonctionne, smoke indique si le drone doit ou non marquer sa cible par un fumigène donc la couleur est indiquée par smokeColor (valeur possible red/green/white/orange/blue). La valeur tot indique le temps en minute avant que le drone s'autodétruise
+
+Exemple de code pour un drone avec autolase : 
+`
+local MQ9Auto = Reaper:New()
+MQ9Auto:SetZones(baseAndZoneMap)
+MQ9Auto:SetStartFrequency(40)
+MQ9Auto:NumberMax(5)
+MQ9Auto:SetStartLaserCode(1681)
+MQ9Auto:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30}) --red/green/white/orange/blue
+MQ9Auto:Init()
+`
 
 
-### Class IA
-
+### Class IA (class IABlue)
+La clas IABlue est au moins aussi complexe que la classe CaptureBase car elle gère elle aussi de multiples systèmes : 
+ - les tankers et awacs (qui sont décrits dans leur propre class)
+ - les missions de bombardement par B-1B (lui aussi décrit dans sa propre class)
+ - le système de reconnaissance par "satellite"
+ - l'utilisation des missiles Tomahawk (également décrit dans sa propre class)
 
 
 #### Tankers
@@ -292,6 +338,10 @@ Ce système utilise les fonctions suivantes :
 
 
 #### Informations PA
+
+
+#### Utilisation de la class IABlue
+
 
 
 ### CAP
