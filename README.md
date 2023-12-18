@@ -11,8 +11,7 @@ DSM se décompose en 2 scripts à charger : le premier (DCSSimplifyMission) cont
 Charger le script DCSSimplifyMission.lua en déclenchement unique sur un temps supérieur à 1s.
 Charger ensuite votre script de mission sur un second déclencheur à 10s.
 
-## Unités requises au niveau de l'éditeur  {#editeur}
-
+## Unités requises au niveau de l'éditeur
 Il est nécessaire d'ajouter des unités en activation retardées au niveau de l'éditeur et de respecter la syntaxe pour le nom du groupe. Ces groupes seront utilisés pour faire spawn les unités aériennes, au sol et des systèmes de capture : 
 
     - MOOSERED : une unité au sol, le type importe peu
@@ -227,7 +226,7 @@ Il est possible d'ajouter un mod Zeus qui vous permettra de faire spawn des unit
 Ce mod peut aussi être utilisé seul dans un script mission ce qui vous permet d'avoir en 2 lignes une mission d'entrainement. 
 
 #### Utilisation
-  - Constructeur : `local Zeus = ZeusMod:New('MOOSERED')` : Le constructeur prend en paramètre le nom de l'unité dans l'éditeur qui lui servira d'encrage. Cette unité doit être en activation retardée (voir #editeur) 
+  - Constructeur : `local Zeus = ZeusMod:New('MOOSERED')` : Le constructeur prend en paramètre le nom de l'unité dans l'éditeur qui lui servira d'encrage. Cette unité doit être en activation retardée (voir [editeur](#unités-requises-au-niveau-de-léditeur))
   - Initialisation : `Zeus:Init()` : tant que cette ligne n'est pas appelée, Zeus ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
   - Obligatoire pour autoriser son utilisation : `Zeus:Allow()` : par défaut et même avec la fonction :Init(), le mode Zeus n'est pas fonctionnel, cela permet de donner un niveau supplémentaire pour activer ou non le module.
 
@@ -241,7 +240,7 @@ Afin d'éviter l'utilisation du mod par n'importe qui, il est possible de mettre
 Afin d'éviter une sauvegarde des unités via le script de persistance, il faut utiliser la fonction `:ExcludePersistance(PWS)` avec la variable liée à la class PWS (Persistance donc les exemples ici)
 
 #### Utilisation In Game
-Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici https://github.com/docbrownd/DCSSymplifyMission/edit/master/ZeusReadme.md
+Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici [ZeusReadme](./ZeusReadme.md)
 
 	
 
