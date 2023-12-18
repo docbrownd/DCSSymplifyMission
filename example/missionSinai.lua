@@ -66,10 +66,10 @@ Tacan:AddTacan({
 Tacan:Init()
 
 local artillery = GroundArtillery:New()
-artillery:AddGroundShootIf("Scud1", "Ramon Airbase")
-artillery:AddGroundShootIf("Scud2", "Ovda")
-artillery:AddGroundShootIf("Scud3", "Melez")
-artillery:AddGroundShootIf("Ramon", "Kedem")
+-- artillery:AddGroundShootIf("Scud1", "Ramon Airbase") --add Scud1 group in editor 
+-- artillery:AddGroundShootIf("Scud2", "Ovda") --add Scud1 group in editor 
+-- artillery:AddGroundShootIf("Scud3", "Melez") --add Scud3 group in editor 
+-- artillery:AddGroundShootIf("Ramon", "Kedem") --add Ramon group in editor 
 artillery:Init()
 
 
