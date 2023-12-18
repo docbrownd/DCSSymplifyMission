@@ -198,8 +198,8 @@ Le groupe va prendre pour cible un point choisi aléatoirement dans la zone auto
 ### Capture de base (class CaptureAirBase)
 Il s'agit de l'une des class les plus complexes car elle gère plusieurs parties du game play :
  - la capture de base par C17
- - le spwan d'unité de capture
- - le spwan de défense au posé du C17
+ - le spawn d'unité de capture
+ - le spawn de défense au posé du C17
  - l'activation de l'artillerie ennemie
  - la recapture de base par des convois (au sol ou aéroportés) ennemis
 
