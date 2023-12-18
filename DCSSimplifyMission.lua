@@ -134329,7 +134329,7 @@ end
 if(o==nil)then return timer.getTime()+60 end
 env.info("end GetZone "..t.base,false)
 o:Scan({Object.Category.UNIT},{Unit.Category.GROUND_UNIT})
-if(not o:IsNoneInZone())then return timer.getTime()+60 end
+if(not o:IsNoneInZoneOfCoalition(coalition.side.RED)())then return timer.getTime()+60 end
 env.info("start capture "..t.base,false)
 if(t.autocapture)then
 local o=a:GetCoordinate()
@@ -135140,7 +135140,7 @@ return(t+e-a)*1000000
 end
 AwacsIA={}
 do
-function AwacsIA:new(e)
+function AwacsIA:New(e)
 local e=e
 setmetatable(e,{__index=self})
 return e
@@ -135148,7 +135148,7 @@ end
 end
 TankerIA={}
 do
-function TankerIA:new(e)
+function TankerIA:New(e)
 local e=e
 setmetatable(e,{__index=self})
 return e
@@ -135156,7 +135156,7 @@ end
 end
 IABombing={}
 do
-function IABombing:new(e)
+function IABombing:New(e)
 local e=e
 setmetatable(e,{__index=self})
 return e
@@ -137434,4 +137434,4 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info('DCSSimplifyMission load (' .. tostring('1.0.7') .. ')', false)
+env.info('DCSSimplifyMission load (' .. tostring('1.0.9') .. ')', false)
