@@ -137434,4 +137434,4 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info('DCSSimplifyMission load (' .. tostring('1.0.9') .. ')', false)
+env.info('DCSSimplifyMission load (' .. tostring('1.0.10') .. ')', false)
