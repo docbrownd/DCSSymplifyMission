@@ -171,33 +171,100 @@ Le script initial vient avec plusieurs configuration qu'il est possible de chang
 Cette class permet de faire spawn des Tacan lorsqu'une base est capturée. Le tacan est ajouté à la position (0,0) de la base, soit généralement en bout de piste. 
 
 #### Utilisation
-  - Constructeur : `local Tacan = TacanBase:New()`
-  - Ajout d'un tacan : `local Tacan = TacanBase:AddTacan(obj)`, avec obj comme suit :
+  - Constructeur : `local tacan = TacanBase:New()`
+  - Ajout d'un tacan : `local tacan = TacanBase:AddTacan(obj)`, avec obj comme suit :
    - code : code Tacan qui sera affiché sur les HSI
    - frequency : fréquence du Tacan
    - band : bande du Tacan, X ou Y
-   - base : la base liée (telle qu'affichée dans l'éditeur)
-   - exemple :  `local Tacan = TacanBase:AddTacan({code = 'HZM', frequency = 95, band = 'X', base = Hatzerim)` pour ajouter un tacan 95X sur la base d'Hatzerim 
-  - Initialisation : `Tacan:Init()` : tant que cette ligne n'est pas appelée, la class Tacan fonctionnera pas. Cette ligne doit être appelée en dernier
+   - base : la base liée (tel qu'affiché dans l'éditeur)
+   - Exemple :  `tacan:AddTacan({code = 'HZM', frequency = 95, band = 'X', base = Hatzerim)` pour ajouter un tacan 95X sur la base d'Hatzerim 
+  - Initialisation : `tacan:Init()` : tant que cette ligne n'est pas appelée, la class Tacan ne fonctionnera pas. Cette ligne doit être appelée en dernier
     
 
-### Artillerie
+### Artillerie (class GroundArtillery)
+Cette class permet d'activer des unités pour les faire tirer sur une base lorsque celle-ci est capturée, comme des sites scud ou des unités Smerch. 
+Cette class doit être à la fois initialisée et utilisée de concert avec la class CaptureAirBase pour fonctionner.
+Le groupe va prendre pour cible un point choisi aléatoirement dans la zone autour de la base. La précision est donc toutes relative.
 
 
 
-### Capture de base 
+#### Utilisation
+  - Constructeur : `local artillery = GroundArtillery:New()`
+  - Ajout d'un tacan : `artillery:AddGroundShootIf(unit, airbase)`, avec unit le nom du groupe à contrôler, airbase le nom de la base (tel qu'affiché dans l'éditeur) ciblée. Exemple : `artillery:AddGroundShootIf("Scud1", "Ramon Airbase")` va activer le groupe Scud1 et lui faire cibler la base Ramon Airbase
+  - Initialisation : `artillery:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
+    
 
 
-#### Capture automatique 
+### Capture de base (class CaptureAirBase)
+Il s'agit de l'une des class les plus complexes car elle gère plusieurs parties du game play :
+ - la capture de base par C17
+ - le spwan d'unité de capture
+ - le spwan de défense au posé du C17
+ - l'activation de l'artillerie ennemie
+ - la recapture de base par des convois (au sol ou aéroportés) ennemis
+
+Concernant la capture de base, pour limiter la charge serveur, les bases ne sont scannées qu'à raison d'une base toutes les minutes. Si vous ajoutez 20 bases, la dernière ne sera donc scannée qu'au bout de 20 min de jeu
+
+#### Utilisation
+  - Constructeur : `MyCapture = CaptureAirBase:New(PWS)` : la class a besoin de la class PWS pour fonctionner correctement. Vous DEVEZ donc lui passer la variable contenant cette class (Persistance ici)
+  - Initialisation : `MyCapture:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
+
+#### Ajouter une base à capturer par C17
+`MyCapture:AddbaseToCapture(obj)` permet d'ajouter une base qui sera capturée par C17 (seul avion disponible pour le moment), avec obj un objet contenant : 
+
+ - base : le nom de la base (tel qu'indiqué dans l'éditeur)
+ - baseStart : le nom de la base de départ pour le C17 (tel qu'indiqué dans l'éditeur), attention la base doit être assez grande pour accueillir les C17 
+ - plane = "C-17", pour le moment pas d'autres options disponibles
+ - groupPop : le nom du groupe qui popera une fois que le C17 sera posé (et uniquement dans ce cas), en règle général un site SAM. Le nom doit correspondre à un groupe en activation retardé au niveau de l'éditeur
+
+Exemple : `MyCapture:AddbaseToCapture({base = "Al Mansurah", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})` : Ajoute la base Al Mansurah au système de capture par C17 qui partira de la base de Ben-Gurion et fera pop le groupe Hawk une fois posé
+
+#### Ajouter une base à capturer automatiquement (sans C17)
+`:AddbaseAutoCapture(nom)` permet d'ajouter une base (nom) qui sera capturée sans C17 via le slot de l'unité nommée 'MLRS capture' dans l'éditeur. 
+
+#### Activation de l'artillerie à la capture d'une base 
+`:AddGroundControl(GroundArtillery)` permet, à la capture d'une base, d'activer les unités contrôlées par la class GroundArtillery. 
 
 
-#### Capture par C17
+#### Système de recapture de base par convoi ennemi
+Ce système fonctionne en plusieurs parties : 
+ - `:RedGroundCaptureGroup({groupe1, groupe2})` : cette fonction permet d'indiquer le nom des groupes qui vont spawn en tant que convoi. Le groupe est choisi aléatoirement dans la liste, donc plus il est présent, plus il a de probabilité d'être choisit. Le groupe peut soit être ajouté dans l'éditeur, soit être choisi dans la liste des convois disponibles : 
+    - heavy : convoi lourdement armé comprenant des Tank, des BTR, des SAM (SA15 et SA9) et une ZSU
+    - sa9 : convoi "heavy" sans SA15
+    - zu : convoi "sa9" sans SA9
+    - armored : convoi "zu" sans la ZSU23
+    - t90 : convoi de 7 T90 et un Ural
+    - t90SA : convoi "t90" avec un SA9 en plus
+    - unArmored : convoi non armé de 9 Ural
+    - scout : convoi comprenant plusieurs Urals, dont certains sont armés
+    - uniq : convoi comportant une seule unité HL_KORD (Ural armé)
 
+ - `:RedSpawnCapturegroup({groupe1, groupe2 })` : cette fonction permet d'indiquer quel groupe Red va spawn au niveau de la base capturée, à la place du convoi. Le groupe est choisi aléatoirement dans la liste, et correspond à un groupe ajouté dans l'éditeur en activation retardée
+   
+ - `:RedMaxGroundSpawn(obj)` : permet d'ajuster le nombre de convoi autorisés à slot en fonction du nombre de joueur connecté. Obj est un tableau d'objet construit comme suit :
+  	- l'indice du tableau est le nombre de groupe autorisé
+  	- l'objet du tableau contient un attribut min et un attribut max correspondant respectivement au nombre de joueur minimum et maximum pour autoriser le spawn
+  	- exemple pour 3 groupes :
+    `
+  	{
+    		{ min = 3, max = 6, },
+    		{ min = 7, max = 10},
+    		{ min = 11}
+	}
+ `
+ 
+		- Le premier groupe pourra spawn s'il y a au moins 3 joueurs
+		- Le second groupe s'il y a 7 joueurs
+		- Le dernier groupe s'il y a 11 joueurs
 
-#### Recapture de base par des unités Red - sol
+ - `:AddRedGroundCaptureBase({start = "baseDépart", destination = "baseDestination" )` permet de spécifier quelle base peut être recapturée par un convoi et d'où il doit partir (le système est à double sens : une base de destination peut devenir la base d'origine). Les bases doivent avoir le même nom que dans l'éditeur. Exemple `MyCapture:AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})` 
+ -`:RedGroundSpawnTime(temps_en_seconde)` change le temps minimal (en seconde) entre 2 spawn d'un même groupe. Par défaut 1200
 
-
-#### Recapture de base par des unités Red - air
+#### Système de recapture de base par convoi aérien
+En plus de la capture par voie terrestre, il est possible pour des bases éloingées de faire spawn un IL76 qui va larguer un convoi à 50Nm d'une base cible. 
+Ce système utilise les fonctions suivantes : 
+ - `:RedAirCaptureHQ(obj)` permet d'indiquer de quelles bases l'IL76 peut partir, attention la base doit être assez grande pour permettre son spawn. obj est une liste de base disponible, si la première est capturée, l'IL76 va spawn sur la seconde, et ainsi de suite. Exemple :  `MyCapture:RedAirCaptureHQ({"Cairo International Airport"})`
+ - `:AddRedAirCaptureBase("Nom_de_laBase")` : permet d'ajouter une base qui pourra être ciblée par l'IL76. Exemple `MyCapture:AddRedAirCaptureBase("Nevatim")`
 
 
 
