@@ -167,8 +167,19 @@ Par comparaison, par défaut une mk82 à une valeure de 118 alors qu'une mk84 es
 ##### Modifier les options du script original
 Le script initial vient avec plusieurs configuration qu'il est possible de changer via `:ChangeOption(optionName, optionValue)`
 
-### Tacan
+### Tacan (class TacanBase)
+Cette class permet de faire spawn des Tacan lorsqu'une base est capturée. Le tacan est ajouté à la position (0,0) de la base, soit généralement en bout de piste. 
 
+#### Utilisation
+  - Constructeur : `local Tacan = TacanBase:New()`
+  - Ajout d'un tacan : `local Tacan = TacanBase:AddTacan(obj)`, avec obj comme suit :
+   - code : code Tacan qui sera affiché sur les HSI
+   - frequency : fréquence du Tacan
+   - band : bande du Tacan, X ou Y
+   - base : la base liée (telle qu'affichée dans l'éditeur)
+   - exemple :  `local Tacan = TacanBase:AddTacan({code = 'HZM', frequency = 95, band = 'X', base = Hatzerim)` pour ajouter un tacan 95X sur la base d'Hatzerim 
+  - Initialisation : `Tacan:Init()` : tant que cette ligne n'est pas appelée, la class Tacan fonctionnera pas. Cette ligne doit être appelée en dernier
+    
 
 ### Artillerie
 
@@ -200,7 +211,7 @@ Le script initial vient avec plusieurs configuration qu'il est possible de chang
 
 ### Class IA
 
-(description)
+
 
 #### Tankers
 
