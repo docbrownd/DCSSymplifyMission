@@ -106,12 +106,11 @@ MyCapture:RedGroundCaptureGroup({"unArmored","armored","scout","zu","zu","sa9", 
 MyCapture:RedSpawnCapturegroup({"redGround"}) -- editor group name
 
 
-MyCapture:RedMaxGroundSpawn( {
+MyCapture:RedMaxGroundSpawn({
     { min = 3, max = 6, },
     { min = 7, max = 10},
     { min = 11}
-}
-)
+})
 
 
 MyCapture:RedGroundSpawnTime(1200) --time in s before respawn for same group
