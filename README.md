@@ -258,7 +258,7 @@ Ce système fonctionne en plusieurs parties :
 		- Le dernier groupe s'il y a 11 joueurs
 
  - `:AddRedGroundCaptureBase({start = "baseDépart", destination = "baseDestination" )` permet de spécifier quelle base peut être recapturée par un convoi et d'où il doit partir (le système est à double sens : une base de destination peut devenir la base d'origine). Les bases doivent avoir le même nom que dans l'éditeur. Exemple `MyCapture:AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})` 
- -`:RedGroundSpawnTime(temps_en_seconde)` change le temps minimal (en seconde) entre 2 spawn d'un même groupe. Par défaut 1200
+ - `:RedGroundSpawnTime(temps_en_seconde)` change le temps minimal (en seconde) entre 2 spawn d'un même groupe. Par défaut 1200
 
 #### Système de recapture de base par convoi aérien
 En plus de la capture par voie terrestre, il est possible pour des bases éloingées de faire spawn un IL76 qui va larguer un convoi à 50Nm d'une base cible. 
@@ -266,33 +266,36 @@ Ce système utilise les fonctions suivantes :
  - `:RedAirCaptureHQ(obj)` permet d'indiquer de quelles bases l'IL76 peut partir, attention la base doit être assez grande pour permettre son spawn. obj est une liste de base disponible, si la première est capturée, l'IL76 va spawn sur la seconde, et ainsi de suite. Exemple :  `MyCapture:RedAirCaptureHQ({"Cairo International Airport"})`
  - `:AddRedAirCaptureBase("Nom_de_laBase")` : permet d'ajouter une base qui pourra être ciblée par l'IL76. Exemple `MyCapture:AddRedAirCaptureBase("Nevatim")`
 
-
-
-
 ### Reaper (class Reaper)
 Il est possible d'ajouter 2 types de drones sur une mission, tout deux seront appelés via le menu communication et apparaitront au niveau d'une base. Ces types de drones diffèrent par leur mission : le premier drone devra être contacté pour avoir des informations sur une cible (mode AFAC), le second scannera la zone est lasera automatiquement les cibles (avec un visuel via fumigène). Les deux drones sont codés via la class Reaper, le drone avec autolase a simplement quelques options en plus.
 
 #### Reaper classique
   - Constructeur : `local MQ9 = Reaper:New()`
   - `MQ9:SetZones(menuComm)` : cette fonction permet de définir la strcuture du menu comm "MQ-9 Reaper". menuComm doit contenir un premier niveau de Menu (peu importe le nom) et un second qui sera constituer du nom des bases où le drone sera dirigé.
-    Exemple :
- `
-local menuComm = {
-    ["Israel"] = {
-        "Hatzerim",
-        "Kedem",
-        "Nevatim",
-        "Ovda",
-        "Ramon Airbase"
-    },
-    ["Est Egypte"] = {
-        "Abu Rudeis", "El Arish", "Melez", "St Catherine", "El Gora"
-    },
-    ["Ouest Egypte"] = {
-        "Al Mansurah", "Cairo West", "Cairo International Airport","Fayed", "Wadi al Jandali"
-    }
-}
- `
+
+    	local menuComm = {
+    		["Israel"] = {
+        		"Hatzerim",
+        		"Kedem",
+        		"Nevatim",
+        		"Ovda",
+        		"Ramon Airbase"
+    		},
+    		["Est Egypte"] = {
+        		"Abu Rudeis",
+    			"El Arish",
+    			"Melez",
+    			"St Catherine",
+    			"El Gora"
+    		},
+    		["Ouest Egypte"] = {
+        		"Al Mansurah",
+    			"Cairo West",
+    			"Cairo International Airport",
+    			"Fayed",
+    			"Wadi al Jandali"
+    		}
+    	}
     
   - Initialisation : `MQ9:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
 
@@ -307,16 +310,14 @@ Le drone avec autolase a les meme options que le drone classique, sauf qu'il n'e
  - `:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30})` : décrit la misison du drone : state doit être à true pour que le drone fonctionne, smoke indique si le drone doit ou non marquer sa cible par un fumigène donc la couleur est indiquée par smokeColor (valeur possible red/green/white/orange/blue). La valeur tot indique le temps en minute avant que le drone s'autodétruise
 
 Exemple de code pour un drone avec autolase : 
-`
-local MQ9Auto = Reaper:New()
-MQ9Auto:SetZones(baseAndZoneMap)
-MQ9Auto:SetStartFrequency(40)
-MQ9Auto:NumberMax(5)
-MQ9Auto:SetStartLaserCode(1681)
-MQ9Auto:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30}) --red/green/white/orange/blue
-MQ9Auto:Init()
-`
 
+	local MQ9Auto = Reaper:New()
+	MQ9Auto:SetZones(baseAndZoneMap)
+	MQ9Auto:SetStartFrequency(40)
+	MQ9Auto:NumberMax(5)
+	MQ9Auto:SetStartLaserCode(1681)
+	MQ9Auto:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30})
+	MQ9Auto:Init()
 
 ### Class IA (class IABlue)
 La clas IABlue est au moins aussi complexe que la classe CaptureBase car elle gère elle aussi de multiples systèmes : 
@@ -351,22 +352,23 @@ La class Tanker ne contient qu'un constructeur qui permet de définir l'ensemble
   - endPosition : nom de la zone de déclenchement A dans l'éditeur
 
 
-Exemple d'un tanker : `
-local tanker1 = TankerIA:New({
-    plane = "KC135", 
-    alt = 20000, 
-    knot = 450, 
-    frequency = 230, 
-    tacan = {frequency = 30, band = "X", code = "KC1"}, 
-    callsign = {name = "Shell", groupeNumber = 1}, 
-    takeOffFrom = "Ben-Gurion",
-    startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
-    progression = {
-        {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
-        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
-    }
-})
-`
+Exemple d'un tanker : 
+
+    local tanker1 = TankerIA:New({
+    	plane = "KC135", 
+    	alt = 20000, 
+    	knot = 450, 
+    	frequency = 230, 
+    	tacan = {frequency = 30, band = "X", code = "KC1"}, 
+    	callsign = {name = "Shell", groupeNumber = 1}, 
+    	takeOffFrom = "Ben-Gurion",
+    	startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
+    	progression = {
+                {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
+                {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
+    	}
+    })
+
 Ici tanker1 correspondra un KC135 répondant sur la 230MHz avec le callsign Shell11 et un tacan "KC1" en 30X. La tanker partira de Ben Gurion et se positionnera entre les zone "KC135-1-1" et "KC135-1-2" tant qu'aucune base sera capturée. Il volera à une vtesse de 450noeuds à 20k pieds. Il se déplacera sur KC135-2-1 et KC135-2-2 une fois la base Ovda capturée, puis sur KC135-3-1/KC135-3-2 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur KC135-3-1/KC135-3-2
 
 Le tanker n'est ici que configuré, il faudra l'injecter dans la class IABlue
@@ -374,18 +376,18 @@ Le tanker n'est ici que configuré, il faudra l'injecter dans la class IABlue
 
 #### Awacs (class AwacsIA)
 L'AWACS fonctionne de la même manière, il a juste besoin d'une zone de déclenchement pour orbiter (et il n'est pas possible de lui donner une altitude/vitesse ou un tacan). Il faut aussi respecter les callsign possibles pour les Awacs (Darkstar/Overlod par exemple) : 
-`
-local awacs1 = AwacsIA:New({
- frequency = 280,
-    callsign = {name = "Darkstar", groupeNumber = 1}, 
-    takeOffFrom = "Ben-Gurion",
-    startTo = "awacs-1",
-    progression = { 
-        {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
-        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
-    }
-})
-`
+
+    local awacs1 = AwacsIA:New({
+        frequency = 280,
+        callsign = {name = "Darkstar", groupeNumber = 1},
+        takeOffFrom = "Ben-Gurion",
+        startTo = "awacs-1",
+        progression = { 
+            {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
+            {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
+        }
+    })
+
 Ici l'AWACS répondra sur la 230MHz avec le callsign Darkstar11. L'AWACS partira de Ben Gurion et se positionnera en orbite sur la zone awacs-1 tant qu'aucune base sera capturée. Il se déplacera sur awacs-2 une fois la base Ovda capturée, puis sur awacs-3 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur awacs-3
 
 Comme pour le tanker, l'AWACS n'est ici que configuré, il faudra l'injecter dans la class IABlue
@@ -417,15 +419,16 @@ Les missiles s'utilisent de 2 manières :
 
 #### Informations PA (class IAGAN)
 Via la class IABlue (et la class Menu) il est possible d'afficher sur demande les informations relatives au PA. Il suffit d'indiquer les informations saisies dans l'éditeur (pour le moment elles ne sont pas récupérées automatiquement) : 
-`local gan = IAGAN:New({
-    groupeName = "Groupe aeronaval", 
-    ships = {
-        {name = "Lincoln", frequency = "127.5MHz" , tacan = "72X", tacanInfos = "LNC", link4 = "336MHz", ICLS = "20"},
-        {name = "Stennis", frequency = "129.5MHz" , tacan = "52X", tacanInfos = "STN", link4 = "316MHz", ICLS = "10"},
-        {name = "Washington", frequency = "128.5MHz" , tacan = "62X", tacanInfos = "WHG", link4 = "326MHz", ICLS = "15"}
-    }
-})
-`
+	
+     local gan = IAGAN:New({
+        groupeName = "Groupe aeronaval", 
+        ships = {
+            {name = "Lincoln", frequency = "127.5MHz" , tacan = "72X", tacanInfos = "LNC", link4 = "336MHz", ICLS = "20"},
+            {name = "Stennis", frequency = "129.5MHz" , tacan = "52X", tacanInfos = "STN", link4 = "316MHz", ICLS = "10"},
+            {name = "Washington", frequency = "128.5MHz" , tacan = "62X", tacanInfos = "WHG", link4 = "326MHz", ICLS = "15"}
+        }
+    })
+
 Via le menu communication, il sera possible de demander les informations PA, qui afficheront le nom des bâtiments, leur tacan, la fréquence d'appel, ainsi que les fréquences ICLS et Link4
 
 
@@ -500,24 +503,21 @@ Comme il s'agit d'un tirage au sort, si un nom est indiquer plusieurs fois dans 
 
 Exemple possible : 
 
-`local planes = { -- le JF17 aura 1 chance sur 4 de sortir
-	"SyAAF JF-17",
-    	"SyAAF Su-30",
-     	"SyAAF Su-30",
-     	"SyAAF Su-30",
-}
-redCap:AddGroup(
-    {
+    local planes = { -- le JF17 aura 1 chance sur 4 de sortir
+        "SyAAF JF-17",
+        "SyAAF Su-30",
+        "SyAAF Su-30",
+        "SyAAF Su-30",
+    }
+    redCap:AddGroup({
         planes = planes,
         start = {"Inshas Airbase" },
         objectif = "Melez",
         name = "Juliet",
         blockIfRed = "Melez",
         minPlayer = 14
-    }
-)
+    })
 
-`
 Ici le groupe Juliet ne décollera que s'il y a au moins 14 joueurs, de la base Inshas Airbase et ira en direction de la base Melez, une fois que cette dernière sera capturée par les bleus.
 
 
