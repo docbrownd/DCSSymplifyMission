@@ -326,28 +326,199 @@ La clas IABlue est au moins aussi complexe que la classe CaptureBase car elle g�
  - l'utilisation des missiles Tomahawk (également décrit dans sa propre class)
 
 
-#### Tankers
+#### Tankers (class TankerIA)
+La class IA peut gérer des tankers (KC135/KC135MPRS) mais ces derniers doivent être configurés avant via la class TankerIA. Il est possible d'ajouter autant de Tanker ou d'Awacs que voulu. 
+
+##### Utilisation
+La class Tanker ne contient qu'un constructeur qui permet de définir l'ensemble des options : `local tanker1 = TankerIA:New({obj})`
+ - plane : le type d'avion : KC135 ou KC135MPRS (le KC130 n'est pas disponible)
+ - alt : altitude en pieds de l'appareil
+ - knot : vitesse en noeuds de l'appareil
+ - tacan : objet permettant de définir le tacan de l'appareil :
+  - frequency : frequence du Tacan
+  - band : bande du Tacan (X ou Y)
+  - code : code du tacan
+- callsign : objet décrivant le callsign du tanker :
+  - name : le nom du tanker (attention à prendre les noms compatibles avec les tankers : Shell, Texaco ou Arco)
+  - groupNumber : le n° du groupe (premier chiffre des callsign)
+- takeOffFrom : nom de l'aéroport de départ du Tanker
+- startTo : objet décrivant la zone de navigation d'origine, qui se fera entre 2 points A et B. Ces points sont définis via des zones de déclenchement au niveau de l'éditeur :
+  - startPosition : nom de la zone de déclenchement A dans l'éditeur
+  - endPosition : nom de la zone de déclenchement B dans l'éditeur
+- progression : tableau d'objet. En fonction de la capture des bases, le tanker peut se déplacer sur d'autres zones via le déclencheur, il est possible de saisir autant de progression que souhaitées, l'ordre est en revanche important : il faut indiquer les dernières zones de déplacement au début
+  - bases : liste des bases qui doivent être bleue pour déclencher la progression
+  - startPosition : nom de la zone de déclenchement A dans l'éditeur
+  - endPosition : nom de la zone de déclenchement A dans l'éditeur
 
 
-#### Awacs
+Exemple d'un tanker : `
+local tanker1 = TankerIA:New({
+    plane = "KC135", 
+    alt = 20000, 
+    knot = 450, 
+    frequency = 230, 
+    tacan = {frequency = 30, band = "X", code = "KC1"}, 
+    callsign = {name = "Shell", groupeNumber = 1}, 
+    takeOffFrom = "Ben-Gurion",
+    startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
+    progression = {
+        {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
+        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
+    }
+})
+`
+Ici tanker1 correspondra un KC135 répondant sur la 230MHz avec le callsign Shell11 et un tacan "KC1" en 30X. La tanker partira de Ben Gurion et se positionnera entre les zone "KC135-1-1" et "KC135-1-2" tant qu'aucune base sera capturée. Il volera à une vtesse de 450noeuds à 20k pieds. Il se déplacera sur KC135-2-1 et KC135-2-2 une fois la base Ovda capturée, puis sur KC135-3-1/KC135-3-2 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur KC135-3-1/KC135-3-2
 
-#### Bombardement 
-
-#### Tomahawk (depuis un porte avion)
+Le tanker n'est ici que configuré, il faudra l'injecter dans la class IABlue
 
 
+#### Awacs (class AwacsIA)
+L'AWACS fonctionne de la même manière, il a juste besoin d'une zone de déclenchement pour orbiter (et il n'est pas possible de lui donner une altitude/vitesse ou un tacan). Il faut aussi respecter les callsign possibles pour les Awacs (Darkstar/Overlod par exemple) : 
+`
+local awacs1 = AwacsIA:New({
+ frequency = 280,
+    callsign = {name = "Darkstar", groupeNumber = 1}, 
+    takeOffFrom = "Ben-Gurion",
+    startTo = "awacs-1",
+    progression = { 
+        {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
+        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
+    }
+})
+`
+Ici l'AWACS répondra sur la 230MHz avec le callsign Darkstar11. L'AWACS partira de Ben Gurion et se positionnera en orbite sur la zone awacs-1 tant qu'aucune base sera capturée. Il se déplacera sur awacs-2 une fois la base Ovda capturée, puis sur awacs-3 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur awacs-3
 
-#### Informations PA
+Comme pour le tanker, l'AWACS n'est ici que configuré, il faudra l'injecter dans la class IABlue
 
+
+#### Bombardement (class IABombing)
+Il est possible d'ajouter un B-1B IA qui pourra avoir 2 missions : bombarder une piste avec de la MK82 ou bombarder des unités sur une base avec des GBU31 (GPS), via le menu de communication. La class n'a qu'un constructeur qui prend une objet contenant le nom de la base de départ :   
+`local bombing = IABombing:New({takeOffFrom = "Ben-Gurion"})`
+
+La class ne contient pas de fonction Init(), pour fonctionner il faut l'injecter dans la class IABlue
+
+
+#### Tomahawk (class IATomahawk)
+Il est possible d'utiliser les missiles Tomahawk si la flotte du PA contient des batiments ayant ces missiles. 
+##### Utilisation 
+ - Contructeur : `local tomahawk = IATomahawk:New("Groupe aeronaval")` : le constructeur a besoin du nom du groupe d'unité contenant les bâtiments depuis lesquels les missiles seront tirés
+
+La class ne contient pas de fonction Init(), pour fonctionner il faut l'injecter dans la class IABlue
+##### Options supplémentaires
+Il est possible de configurer les missiles : 
+ - `:SetMissileMax(nombre)` : permet de définir le nombre maximum de missile pouvant être tiré dans un certain délais (30 min par défaut)
+ - `:SetDelay(temps)` : permet de définir le temps, en minute, de rechargement (temps entre le moment où les missiles sont à 0 puis remis au maximum)
+ - `:SetTimeBetweenFire(temps)` : permet de définir le temps, en seconde, entre deux tirs. 
+
+##### Utilisation In Game
+Les missiles s'utilisent de 2 manières : 
+ - soit via un marqueur dans lequel on tape #t puis en utilisant le menu communication : Demande soutien>Missiles Tomahawk>Tir sur coordonnées 
+ - soit directement via le menu communication pour tirer automatiquement sur les unités présentes au niveau d'une base Demande soutien>Missiles Tomahawk>Sur unités (base)>Nom de la base 
+
+#### Informations PA (class IAGAN)
+Via la class IABlue (et la class Menu) il est possible d'afficher sur demande les informations relatives au PA. Il suffit d'indiquer les informations saisies dans l'éditeur (pour le moment elles ne sont pas récupérées automatiquement) : 
+`local gan = IAGAN:New({
+    groupeName = "Groupe aeronaval", 
+    ships = {
+        {name = "Lincoln", frequency = "127.5MHz" , tacan = "72X", tacanInfos = "LNC", link4 = "336MHz", ICLS = "20"},
+        {name = "Stennis", frequency = "129.5MHz" , tacan = "52X", tacanInfos = "STN", link4 = "316MHz", ICLS = "10"},
+        {name = "Washington", frequency = "128.5MHz" , tacan = "62X", tacanInfos = "WHG", link4 = "326MHz", ICLS = "15"}
+    }
+})
+`
+Via le menu communication, il sera possible de demander les informations PA, qui afficheront le nom des bâtiments, leur tacan, la fréquence d'appel, ainsi que les fréquences ICLS et Link4
+
+
+La class ne contient pas de fonction Init(), pour fonctionner il faut l'injecter dans la class 
 
 #### Utilisation de la class IABlue
+ - Constructeur : `local IA = IABlue:New(PWS)` le constructeur a besoin de la class PWS si vous souhaitez utilser le système de reconnaissance manuel
+ - `:SetTankers({tanker1, tanker2})` : permet d'injecter les tankers configurés via la class TankerIA
+ - `:SetAwacs({awacs1, awacs1})` : permet d'injecter les AWACS configurés via la class AwacsIA
+ - `:SetPA(gan)` : permet d'injecter les informations du groupe aéronaval configurées via la class IAGAN
+ - `:AllowedCruise(tomahawk)` : autorise l'utilisation des Tomahawk, configurés via la class IATomahawk
+ - `:AllowedBombing(bombing)` : autorise l'utilisation de B-1B, configurés via la class IABombing
+ - `:SetZones(menuZones)` : même système que pour les Drones : cette fonction permet de donner la structure du menu comm (nécesaire pour le bombardement B-1B et Tomahawk)
+  - Initialisation : `IA:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
+ - 
+
+#### Options supplémentaires 
+
+ - `:ShowTrainingZone(zone)` : fait pop un drone au-dessus d'une zone (définie via l'éditeur) puis détruit le drone. Cela permet de retirer le brouillard de guerre sur la zone. Utile pour une zone d'entrainement
+ - `:AllowedSatReco()` : autorise l'utilisation de la reconnaissance via un marqueur :
+   - via le texte #reaper qui fait slot un drone et le détruit (pour ne plus avoir le brouillard de guerre)
+   - via le texte #reco pour avoir des cercles de reconnaissance sur les unités trouvées (même principe que le reconnaissance par appareil)
 
 
+### Menu Communication (class Menu)
 
-### CAP
+Cette class permet d'afficher un menu communication nécessaire pour faire appel à différentes fonctiones : obtenir les informations de fréquence des PA, Awacs, Tankers, déclencher une frappe B-1B ou de TomaHawk, déployer des drones (autolase ou classique) : 
 
+#### Utilisation
+ - Constructeur : `local menu = Menu:New()`
+ - `:AddMQ9(Reaper)` : injecte un objet Reaper corresopndant au drone classique (MQ9 dans l'exemple ci-dessus)
+ - `:AddAutoMQ9(Reaper)` : même chose pour le drone autolase (MQ9Auto dans l'exemple ci-dessus)
+ - `:AddIA(IABlue)` : injecte un objet IABlue (IA dans l'exemple ci-dessus)
+ - `:AddFrequences()` : autorise l'affichage des fréquences PA/Awacs/Tanker via le menu comm
+ - Initialisation : `menu:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
-### Menu Communication
+### CAP (class CAP)
+
+#### Fonctionnement In Game
+La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe est composé de 2 appareils et peut décoller d'un PA ou de base. Le type d'appareil est choisi aléatoirement dans une liste. Les avions décollent des bases prédéfinies et si ces dernières sont capturés, ils peuvent décoller d'autres bases. Il est également possible d'activer un groupe ou de le bloquer en fonction du statut d'une base (red ou bleue). Les avions navigueront vers leur base de destination et engageront s'ils détectent une cible dans les 70Nm. Le niveau des appareils est aléatoire par défaut mais peut être défini par paramètre. Quelque soit leur niveau, les appareils ont les mêmes options prédéfinies qui rend la CAP particulièrement difficile à traiter. Une fois le groupe posé ou détruit, il reslot dans un temps aléatoire (par défaut entre 15 et 20 min)
+
+#### Utilisation
+ - Constructeur : `local redCap = CAP:New()`
+ - `:AddGroup(obj)`  : ajoute un groupe CAP, avec obj comme suit :
+  - planes : (obligatoire) une liste contenant le nom des templates des avions à tirer au sort (voir ci-dessous)
+  - start : (obligatoire) une liste de base de départ : si la première est capturée, la base d'après sera utilisée, en absence de base disponible, le groupe n'apparaitra pas
+  - objectif : (obligatoire) le nom de la base de destination
+  - name : (obligatoire) le nom du groupe (doit être unique)
+  - toPA : facultatif, false par défaut. A mettre à true si le groupe slot sur le porte avion (et dans ce cas, le nom de la base de départ doit etre le nom du porte avion)
+  - blockIfBlue : (facultatif) nom de la base qui doit être bleue pour empêcher la CAP de décoller
+  - blockIfRed : (facultatif) nom de la base qui doit être red pour empêcher la CAP de décoller
+  - RedRespawnTimerMin : (facultatif) durée min en seconde avant le prochain slot d'un même groupe (par défaut 900)
+  - RedRespawnTimerMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
+  - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
+  - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
+ - Initialisation : `redCap:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
+
+#### Appareils disponibles et nom à utiliser : 
+
+Le paramètre "plane" attend une liste d'avion qui pourront slot, le nom des appareils doit être choisi dans la liste ci-dessous (vous avez également le nom de l'appareil même si c'est généralement compréhensible) :
+    "SyAAF JF-17" : JF-17
+    "SyAAF Su-30" : Su-30
+    "SyAAF Su-33" : Su-33
+    "SyAAF Mig-31" : Mig31
+    "SyAAF Mig-23" : Mig23
+    "SyAAF Mig-29A" : Mig29A
+    "SyAAF Mig-29S" : Mig29S
+    "SyAAF Mig-21Bis" : Mig21Bis
+    "SyAAF Mig-25PD" : Mig25PD
+
+Comme il s'agit d'un tirage au sort, si un nom est indiquer plusieurs fois dans le paramètre "plane", il aura plus de chance d'être choisi
+
+Exemple possible : 
+
+`local planes = { -- le JF17 aura 1 chance sur 4 de sortir
+	"SyAAF JF-17",
+    	"SyAAF Su-30",
+     	"SyAAF Su-30",
+     	"SyAAF Su-30",
+}
+redCap:AddGroup(
+    {
+        planes = planes,
+        start = {"Inshas Airbase" },
+        objectif = "Melez",
+        name = "Juliet",
+        blockIfRed = "Melez",
+        minPlayer = 14
+    }
+)
+
+`
+Ici le groupe Juliet ne décollera que s'il y a au moins 14 joueurs, de la base Inshas Airbase et ira en direction de la base Melez, une fois que cette dernière sera capturée par les bleus.
 
 
 ### Mode Zeus (class ZeusMod)
@@ -372,7 +543,7 @@ Afin d'éviter une sauvegarde des unités via le script de persistance, il faut 
 Certaines fonctions du mode Zeus peuvent être utilisées plus facilement via le menu comm, toutefois ce type de menu est incompatible avec les missions classiques, il est donc désactivé par défaut. Pour l'activer il faut utiliser la fonction `:AllowMenu()`
 
 #### Utilisation In Game
-Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici [ZeusReadme](./ZeusReadme.md)
+Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici [ZeusReadme](./ZeusReadme.md) (un merci à xMiniKuT pour le design des FOB)
 
 	
 
