@@ -133992,7 +133992,7 @@ e.persistanceObj=t
 e.groundControlObj=nil
 e.datasBase={}
 e.defaultPlane="C-17"
-e.defaultRadiusToCapture=30000
+e.defaultRadiusToCapture=50000
 e.groupPop="MLRS"
 e.basesIndex=0
 e.groupC17Infos={}
@@ -134517,7 +134517,7 @@ radius=500,
 newGroupName=e.context.groupPopPrefix.."_"..e.obj.unit.."_"..e.obj.airbaseName
 }
 mist.teleportToPoint(t)
-Airbase:getByName(e.obj.airbaseName):setCoalition(coalition.side.BLUE)
+e.obj.toAirbase:SetCoalition(coalition.side.BLUE)
 trigger.action.outText("Base "..tostring(e.obj.airbaseName).." capturée !",30)
 else
 return timer.getTime()+5
@@ -137474,4 +137474,4 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info('DCSSimplifyMission load (' .. tostring('1.0.17') .. ')', false)
+env.info('DCSSimplifyMission load (' .. tostring('1.0.18') .. ')', false)
