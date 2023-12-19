@@ -2,7 +2,7 @@
 
 ## Description
 
-DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore. Le code est encore perfectible avec quelques redondances mais il est suffisamment stable pour êter publié. Il est actuellement utilisé pour faire tourner la mission Sinai des serveurs public Couteau et privé Ghost
+DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore. Le code est encore perfectible avec quelques redondances mais il est suffisamment stable pour être publié. Il est actuellement utilisé pour faire tourner la mission Sinai des serveurs public Couteau et privé Ghost
 
 DSM se décompose en 2 scripts à charger : le premier (DCSSimplifyMission) contient l'ensemble des class (dont Moose et Mist) qui peuvent être utilisées, le second correspond à la mission en elle-même. 
 L'ensemble des options disponibles sont décrits ci-après, et un exemple d'un script Mission (pour la map Sinai) est disponible dans le dossier /example (il peut être plus facile dans un premier temps de regarder le script).
@@ -25,7 +25,7 @@ Au délà de ces unités obligatoires, il sera nécessaire d'en ajouter (toujour
 
 ## Principes génériques du script Mission
 
-Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMission doit juste être chargé). Différents modules peuvent être utilisés, certains sont indépendants : ils contiennent une fonction Init().  D'autres modules ne sont qu'une description et doivent être utilisés via d'autres modules plus larges. 
+Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMission doit juste être chargé). Différents modules peuvent être utilisés, certains sont indépendants (ils contiennent une fonction Init()), ainsi il est possible d'utiliser uniquement le mod Zeus au niveau du script Mission.  D'autres modules ne sont qu'une description et doivent être utilisés via des modules plus larges. 
 Les différents modules sont décrits ci-après, tant au niveau du gameplay que pour leur utilisation (au sens 'utilisation dans le script de mission').
 
 
