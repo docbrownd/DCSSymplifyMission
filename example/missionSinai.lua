@@ -44,7 +44,7 @@ MyCapture:AddbaseAutoCapture("Abu Rudeis")
 MyCapture:AddbaseAutoCapture("St Catherine")
 
 MyCapture:RedGroundCaptureGroup({"unArmored","armored","scout","zu","zu","sa9", "sa9","heavy", "heavy"}) -- N group choose randomly. choose in Convoy Class
-MyCapture:RedSpawnCapturegroup({"redGround"}) -- editor grop name
+MyCapture:RedSpawnCapturegroup({"redGround"}) -- editor group name
 
 
 MyCapture:RedMaxGroundSpawn( {
