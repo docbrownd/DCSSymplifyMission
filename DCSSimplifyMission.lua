@@ -83951,16 +83951,16 @@ local e={}
 local l={}
 local r=0
 local u={}
-local v={}
+local p={}
 local m={}
 local k=0
-local p=0
-local b=0
+local v=0
+local g=0
 local w=7000
 local f=7000
 local y={[' air ']=0,[' hel ']=0,[' gnd ']=0,[' bld ']=0,[' static ']=0,[' shp ']=0}
 local h={}
-local g=0
+local b=0
 local q=0
 mist.nextGroupId=1
 mist.nextUnitId=1
@@ -84589,7 +84589,7 @@ end
 end
 end
 end
-local function E()
+local function _()
 local o=mist.DBs.aliveUnits
 local e=mist.DBs.unitsByNum
 local h=mist.utils.deepCopy
@@ -84664,9 +84664,9 @@ for a,t in pairs(country.id)do
 if e.country and string.upper(a)==string.upper(e.country)or t==e.countryId then
 e.countryId=t
 e.country=string.lower(a)
-for o,a in pairs(coalition.side)do
-if a==coalition.getCountryCoalition(t)then
-e.coalition=string.lower(o)
+for a,o in pairs(coalition.side)do
+if o==coalition.getCountryCoalition(t)then
+e.coalition=string.lower(a)
 end
 end
 end
@@ -84683,7 +84683,7 @@ end
 end
 end
 local i=false
-for a,t in pairs(v)do
+for a,t in pairs(p)do
 if mist.stringMatch(t.name,e.groupName)==true then
 i=true
 e.task=t.task
@@ -84692,7 +84692,7 @@ e.uncontrolled=t.uncontrolled
 e.radioSet=t.radioSet
 e.hidden=t.hidden
 e.startTime=t.start_time
-v[a]=nil
+p[a]=nil
 end
 end
 if i==false then
@@ -84790,20 +84790,20 @@ return e
 end
 local function z()
 if r>0 then
-for e,o in pairs(l)do
-local a=false
+for e,a in pairs(l)do
+local o=false
 local i=false
-if not o.checked then
+if not a.checked then
 l[e].checked=true
-local t=o.gp or Group.getByName(e)
+local t=a.gp or Group.getByName(e)
 if mist.DBs.groupsByName[e]then
 local n=mist.DBs.groupsByName[e]
-if o.type~='static'then
+if a.type~='static'then
 if t and t:isExist()==true then
 i=true
 local e=t:getUnit(1)
 if e and(n.groupId~=tonumber(t:getID())or e:getCountry()~=n.countryId or e:getCoalition()~=n.coaltionId)then
-a=true
+o=true
 else
 end
 else
@@ -84811,14 +84811,14 @@ j:warn('$1 : Group was not accessible',e)
 end
 end
 end
-if a==false and o.type~='static'then
+if o==false and a.type~='static'then
 if t and t:isExist()==true then
 i=true
 for t,e in pairs(t:getUnits())do
 if mist.DBs.unitsByName[e:getName()]then
 local t=mist.DBs.unitsByName[e:getName()]
 if tonumber(e:getID())~=t.unitId or e:getTypeName()~=t.type then
-a=true
+o=true
 break
 end
 end
@@ -84827,10 +84827,10 @@ end
 else
 i=true
 end
-if i==true and(a==true or not mist.DBs.groupsByName[e])then
-local e=s(e,o.type)
+if i==true and(o==true or not mist.DBs.groupsByName[e])then
+local e=s(e,a.type)
 if e and type(e)=='table'then
-m[#m+1]={data=e,isUpdated=a}
+m[#m+1]={data=e,isUpdated=o}
 end
 end
 end
@@ -84926,7 +84926,7 @@ k=timer.getTime()
 end
 end
 end
-local function i(e)
+local function E(e)
 if e.id==world.event.S_EVENT_BIRTH and timer.getTime0()<timer.getAbsTime()then
 if Object.getCategory(e.initiator)==1 and not Unit.getPlayerName(e.initiator)then
 if Unit.getGroup(e.initiator)then
@@ -85025,7 +85025,7 @@ mist.DBs.deadObjects[a]=e
 end
 end
 end
-local function _()
+local function i()
 for e,o in pairs(coalition.side)do
 local e=coalition.getGroups(o)
 for t=1,#e do
@@ -85061,18 +85061,18 @@ j=mist.Logger:new('MISTDB','warn')
 t=mist.log
 t:info("initializing databases")
 x()
-mist.addEventHandler(i)
+mist.addEventHandler(E)
 mist.addEventHandler(m)
 t:warn('Init time: $1',timer.getTime())
 mist.main()
-mist.scheduleFunction(_,{},timer.getTime()+1)
+mist.scheduleFunction(i,{},timer.getTime()+1)
 return
 end
 function mist.main()
 timer.scheduleFunction(mist.main,{},timer.getTime()+.01)
-b=b+1
-if b==20 then
-b=0
+g=g+1
+if g==20 then
+g=0
 z()
 if not d.updateDBTables then
 d.updateDBTables=coroutine.create(s)
@@ -85082,11 +85082,11 @@ if coroutine.status(d.updateDBTables)=='dead'then
 d.updateDBTables=nil
 end
 end
-p=p+1
-if p==5 then
-p=0
+v=v+1
+if v==5 then
+v=0
 if not d.updateAliveUnits then
-d.updateAliveUnits=coroutine.create(E)
+d.updateAliveUnits=coroutine.create(_)
 end
 coroutine.resume(d.updateAliveUnits)
 if coroutine.status(d.updateAliveUnits)=='dead'then
@@ -85316,7 +85316,7 @@ end
 end
 u[#u+1]=mist.utils.deepCopy(e.units[t])
 end
-v[#v+1]=mist.utils.deepCopy(e)
+p[#p+1]=mist.utils.deepCopy(e)
 if e.route then
 if e.route and not e.route.points then
 if e.route[1]then
@@ -85366,9 +85366,9 @@ assert(type(t)=='number'or t==nil,'variable 5, expected number or nil, got '..ty
 if not e then
 e={}
 end
-g=g+1
-table.insert(h,{f=o,vars=e,t=i,rep=a,st=t,id=g})
-return g
+b=b+1
+table.insert(h,{f=o,vars=e,t=i,rep=a,st=t,id=b})
+return b
 end
 function mist.removeFunction(t)
 local e=1
@@ -85393,10 +85393,10 @@ end
 world.addEventHandler(e)
 return e.id
 end
-function mist.removeEventHandler(t)
-for a,e in pairs(world.eventHandlers)do
-if e.id and e.id==t then
-world.eventHandlers[a]=nil
+function mist.removeEventHandler(a)
+for t,e in pairs(world.eventHandlers)do
+if e.id and e.id==a then
+world.eventHandlers[t]=nil
 return true
 end
 end
@@ -85412,31 +85412,31 @@ return e.UTMZone..' '..e.MGRSDigraph..' '..string.format('%0'..t..'d',mist.utils
 ..' '..string.format('%0'..t..'d',mist.utils.round(e.Northing/(10^(5-t)),0))
 end
 end
-function mist.tostringLL(e,n,a,r)
-local h,s
-if e>0 then
-h='N'
+function mist.tostringLL(t,e,a,h)
+local n,s
+if t>0 then
+n='N'
 else
-h='S'
+n='S'
 end
-if n>0 then
+if e>0 then
 s='E'
 else
 s='W'
 end
+t=math.abs(t)
 e=math.abs(e)
-n=math.abs(n)
-local i=math.floor(e)
-local t=(e-i)*60
-local o=math.floor(n)
-local e=(n-o)*60
-if r then
-local n=t
+local i=math.floor(t)
+local t=(t-i)*60
+local o=math.floor(e)
+local e=(e-o)*60
+if h then
+local h=t
 t=math.floor(t)
-local r=mist.utils.round((n-t)*60,a)
-local n=e
+local r=mist.utils.round((h-t)*60,a)
+local h=e
 e=math.floor(e)
-local d=mist.utils.round((n-e)*60,a)
+local d=mist.utils.round((h-e)*60,a)
 if r==60 then
 r=0
 t=t+1
@@ -85445,15 +85445,15 @@ if d==60 then
 d=0
 e=e+1
 end
-local n
+local h
 if a<=0 then
-n='%02d'
+h='%02d'
 else
 local e=3+a
-n='%0'..e..'.'..a..'f'
+h='%0'..e..'.'..a..'f'
 end
-return string.format('%02d',i)..' '..string.format('%02d',t)..'\' '..string.format(n,r)..'"'..h..'	 '
-..string.format('%02d',o)..' '..string.format('%02d',e)..'\' '..string.format(n,d)..'"'..s
+return string.format('%02d',i)..' '..string.format('%02d',t)..'\' '..string.format(h,r)..'"'..n..'	 '
+..string.format('%02d',o)..' '..string.format('%02d',e)..'\' '..string.format(h,d)..'"'..s
 else
 t=mist.utils.round(t,a)
 e=mist.utils.round(e,a)
@@ -85465,15 +85465,15 @@ if e==60 then
 e=0
 o=o+1
 end
-local n
+local h
 if a<=0 then
-n='%02d'
+h='%02d'
 else
 local e=3+a
-n='%0'..e..'.'..a..'f'
+h='%0'..e..'.'..a..'f'
 end
-return string.format('%02d',i)..' '..string.format(n,t)..'\''..h..'	 '
-..string.format('%02d',o)..' '..string.format(n,e)..'\''..s
+return string.format('%02d',i)..' '..string.format(h,t)..'\''..n..'	 '
+..string.format('%02d',o)..' '..string.format(h,e)..'\''..s
 end
 end
 function mist.tostringBR(t,e,a,o)
@@ -85673,9 +85673,9 @@ function mist.makeUnitTable(i,e)
 local a={}
 if e then
 if type(e)=='table'then
-for t,e in pairs(e)do
-a[t]=true
+for e,t in pairs(e)do
 a[e]=true
+a[t]=true
 end
 else
 a[e]=true
@@ -85743,9 +85743,9 @@ i='static'
 n=12
 end
 for s,o in pairs(o)do
-for s,o in pairs(o)do
-if s==string.lower(e:sub(n))then
-for o,e in pairs(o)do
+for o,s in pairs(o)do
+if o==string.lower(e:sub(n))then
+for o,e in pairs(s)do
 if type(e)=='table'and(i==''or o==i)and not a[o]then
 for a,e in pairs(e)do
 if type(e)=='table'then
@@ -85779,11 +85779,11 @@ i='static'
 n=13
 end
 for s,o in pairs(o)do
-for s,o in pairs(o)do
-if s==string.lower(e:sub(n))then
-for e,o in pairs(o)do
-if type(o)=='table'and(i==''or e==i)and not a[e]then
-for a,e in pairs(o)do
+for o,s in pairs(o)do
+if o==string.lower(e:sub(n))then
+for o,e in pairs(s)do
+if type(e)=='table'and(i==''or o==i)and not a[o]then
+for a,e in pairs(e)do
 if type(e)=='table'then
 for a,e in pairs(e.units)do
 if t[e.unitName]then
@@ -85840,12 +85840,12 @@ i='vehicle'
 elseif e:sub(8)=='[static]'then
 i='static'
 end
-for e,o in pairs(o)do
-if e=='blue'then
 for o,e in pairs(o)do
-for e,o in pairs(e)do
-if type(o)=='table'and(i==''or e==i)and not a[e]then
-for a,e in pairs(o)do
+if o=='blue'then
+for o,e in pairs(e)do
+for o,e in pairs(e)do
+if type(e)=='table'and(i==''or o==i)and not a[o]then
+for a,e in pairs(e)do
 if type(e)=='table'then
 for a,e in pairs(e.units)do
 if t[e.unitName]then
@@ -85872,9 +85872,9 @@ i='vehicle'
 elseif e:sub(6)=='[static]'then
 i='static'
 end
+for e,o in pairs(o)do
+if e=='red'then
 for o,e in pairs(o)do
-if o=='red'then
-for o,e in pairs(e)do
 for o,e in pairs(e)do
 if type(e)=='table'and(i==''or o==i)and not a[o]then
 for a,e in pairs(e)do
@@ -85902,9 +85902,9 @@ i='vehicle'
 elseif e:sub(7)=='[static]'then
 i='static'
 end
-for e,o in pairs(o)do
-if e=='red'then
 for o,e in pairs(o)do
+if o=='red'then
+for o,e in pairs(e)do
 for o,e in pairs(e)do
 if type(e)=='table'and(i==''or o==i)and not a[o]then
 for a,e in pairs(e)do
@@ -85964,9 +85964,9 @@ i='static'
 end
 for o,e in pairs(o)do
 for o,e in pairs(e)do
-for e,o in pairs(e)do
-if type(o)=='table'and(i==''or e==i)and not a[e]then
-for a,e in pairs(o)do
+for o,e in pairs(e)do
+if type(e)=='table'and(i==''or o==i)and not a[o]then
+for a,e in pairs(e)do
 if type(e)=='table'then
 for a,e in pairs(e.units)do
 if t[e.unitName]then
@@ -86009,8 +86009,8 @@ for n,t in pairs(mist.DBs.unitsByName)do
 local a=0
 for e,o in pairs(e)do
 if type(o)=='table'then
-for i,o in pairs(o)do
-if(t[e]and t[e]==o)or(t[e]and t[e]==i)then
+for o,i in pairs(o)do
+if(t[e]and t[e]==i)or(t[e]and t[e]==o)then
 a=a+1
 end
 end
@@ -86034,14 +86034,14 @@ table.insert(e,t)
 end
 return e
 end
-function mist.getGroupsByAttribute(t,a,r)
+function mist.getGroupsByAttribute(t,a,h)
 local e={}
 e.typeName=t.type or t.typeName or t.typename
 e.country=t.country
 e.coalition=t.coalition
 e.skill=t.skill
 e.categry=t.category
-local h=a or 1
+local r=a or 1
 if e.skill=='human'then
 e.skill={'Client','Player'}
 end
@@ -86050,11 +86050,11 @@ for s,t in pairs(mist.DBs.groupsByName)do
 local a=0
 for e,o in pairs(e)do
 if type(o)=='table'then
-for i,n in pairs(o)do
+for n,i in pairs(o)do
 if e=='skill'or e=='typeName'then
 local o=0
 for s,a in pairs(t.units)do
-if(a[e]and a[e]==n)or(t[e]and t[e]==i)then
+if(a[e]and a[e]==i)or(t[e]and t[e]==n)then
 o=o+1
 break
 end
@@ -86063,7 +86063,7 @@ if o>0 then
 a=a+1
 end
 end
-if(t[e]and t[e]==n)or(t[e]and t[e]==i)then
+if(t[e]and t[e]==i)or(t[e]and t[e]==n)then
 a=a+1
 break
 end
@@ -86086,8 +86086,8 @@ a=a+1
 end
 end
 end
-if a>=h then
-if r then
+if a>=r then
+if h then
 i[t.groupid]=true
 else
 i[s]=true
@@ -86147,17 +86147,17 @@ end
 end
 return false
 end
-function mist.shape.circleInCircle(t,e,o)
-if not o then
+function mist.shape.circleInCircle(t,e,a)
+if not a then
 if mist.utils.get2DDist(t.point,e.point)<=e.radius then
 return true
 end
 end
-local a=mist.utils.getHeadingPoints(e.point,t.point)
-if o then
-return mist.utils.get2DDist(mist.projectPoint(t.point,t.radius,a),e.point)<=e.radius
+local o=mist.utils.getHeadingPoints(e.point,t.point)
+if a then
+return mist.utils.get2DDist(mist.projectPoint(t.point,t.radius,o),e.point)<=e.radius
 else
-return mist.utils.get2DDist(mist.projectPoint(t.point,t.radius,a+math.pi),e.point)<=e.radius
+return mist.utils.get2DDist(mist.projectPoint(t.point,t.radius,o+math.pi),e.point)<=e.radius
 end
 return false
 end
@@ -86171,16 +86171,16 @@ end
 end
 end
 local a=0
-for a=1,#e do
-local o
-if a==#e then
-o=mist.utils.getHeadingPoints(e[a],e[1])
+for o=1,#e do
+local a
+if o==#e then
+a=mist.utils.getHeadingPoints(e[o],e[1])
 else
-o=mist.utils.getHeadingPoints(e[a],e[a+1])
+a=mist.utils.getHeadingPoints(e[o],e[o+1])
 end
-local a=mist.projectPoint(t.point,t.radius,o-(math.pi/180))
-local t=mist.projectPoint(t.point,t.radius,o+(math.pi/180))
-if mist.pointInPolygon(a,e)==true then
+local o=mist.projectPoint(t.point,t.radius,a-(math.pi/180))
+local t=mist.projectPoint(t.point,t.radius,a+(math.pi/180))
+if mist.pointInPolygon(o,e)==true then
 if(i and mist.pointInPolygon(t,e)==true)or not i then
 return true
 end
@@ -86204,34 +86204,34 @@ return true
 end
 return false
 end
-function mist.shape.polyInCircle(t,a,o)
-local e=0
-for i=1,#t do
-if mist.utils.get2DDist(a.point,t[i])<=a.radius then
-if o then
-e=e+1
+function mist.shape.polyInCircle(e,a,i)
+local t=0
+for o=1,#e do
+if mist.utils.get2DDist(a.point,e[o])<=a.radius then
+if i then
+t=t+1
 else
 return true
 end
 end
 end
-if e==#t then
+if t==#e then
 return true
 end
 return false
 end
-function mist.shape.getPointOnSegment(e,t,i)
+function mist.shape.getPointOnSegment(e,t,s)
 local a=mist.utils.makeVec2(e)
 local e=mist.utils.makeVec2(t[1])
 local t=mist.utils.makeVec2(t[2])
-local s,n=a.x-e.x,a.y-e.y
+local n,i=a.x-e.x,a.y-e.y
 local o,a=t.x-e.x,t.x-e.y
 local t=(o*o+a*a)
 if t==0 then
 return{x=e.x,y=e.y}
 end
-local t=(s*o+n*a)/t
-if i then
+local t=(n*o+i*a)/t
+if s then
 if t<0 then
 t=0
 elseif t>1 then
@@ -86241,22 +86241,22 @@ end
 return{x=e.x+t*o,y=e.y+t*a}
 end
 function mist.shape.segmentIntersect(e,t)
-local i,o=e[2].x-e[1].x,e[2]-e[1].y
-local s,n=t[2].x-t[1].x,t[2]-t[1].y
-local h,r=e[1].x-t[1].x,e[1].y-t[1].y
-local a=i*n-o*s
+local o,i=e[2].x-e[1].x,e[2]-e[1].y
+local r,s=t[2].x-t[1].x,t[2]-t[1].y
+local n,h=e[1].x-t[1].x,e[1].y-t[1].y
+local a=o*s-i*r
 if a==0 then
 return false
 end
-local t=(s*r-n*h)/a
+local t=(r*h-s*n)/a
 if t<0 or t>1 then
 return false
 end
-local a=(i*r-o*h)/a
+local a=(o*h-i*n)/a
 if a<0 or a>1 then
 return false
 end
-return true,e[1].x+t*i,e[1].y+t*o
+return true,e[1].x+t*o,e[1].y+t*i
 end
 function mist.pointInPolygon(t,e,i)
 t=mist.utils.makeVec3(t)
@@ -86282,10 +86282,10 @@ else
 return false
 end
 end
-function mist.mapValue(o,e,a,t,i)
-return(o-e)*(i-t)/(a-e)+t
+function mist.mapValue(a,e,o,t,i)
+return(a-e)*(i-t)/(o-e)+t
 end
-function mist.getUnitsInPolygon(t,o,i)
+function mist.getUnitsInPolygon(t,i,o)
 local e={}
 for a=1,#t do
 e[#e+1]=Unit.getByName(t[a])or StaticObject.getByName(t[a])
@@ -86294,7 +86294,7 @@ local t={}
 for a=1,#e do
 local e=e[a]
 local a=e:getCategory()
-if((a==1 and e:isActive())or a~=1)and mist.pointInPolygon(e:getPosition().p,o,i)then
+if((a==1 and e:isActive())or a~=1)and mist.pointInPolygon(e:getPosition().p,i,o)then
 t[#t+1]=e
 end
 end
@@ -86357,7 +86357,7 @@ end
 end
 return i
 end
-function mist.getUnitsInMovingZones(o,i,n,e)
+function mist.getUnitsInMovingZones(i,o,s,e)
 e=e or'cylinder'
 if e=='c'or e=='cylindrical'or e=='C'then
 e='cylinder'
@@ -86368,14 +86368,14 @@ end
 assert(e=='cylinder'or e=='sphere','invalid zone_type: '..tostring(e))
 local t={}
 local a={}
-for e=1,#o do
-local e=Unit.getByName(o[e])or StaticObject.getByName(o[e])
+for e=1,#i do
+local e=Unit.getByName(i[e])or StaticObject.getByName(i[e])
 if e then
 t[#t+1]=e
 end
 end
-for e=1,#i do
-local e=Unit.getByName(i[e])or StaticObject.getByName(i[e])
+for e=1,#o do
+local e=Unit.getByName(o[e])or StaticObject.getByName(o[e])
 if e then
 a[#a+1]=e
 end
@@ -86383,15 +86383,15 @@ end
 local i={}
 for o=1,#t do
 local o=t[o]
-local s=o:getCategory()
+local n=o:getCategory()
 local t=o:getPosition().p
 for h=1,#a do
 local a=a[h]:getPosition().p
-if t and a and((s==1 and o:isActive())or s~=1)then
-if e=='cylinder'and(((t.x-a.x)^2+(t.z-a.z)^2)^.5<=n)then
+if t and a and((n==1 and o:isActive())or n~=1)then
+if e=='cylinder'and(((t.x-a.x)^2+(t.z-a.z)^2)^.5<=s)then
 i[#i+1]=o
 break
-elseif e=='sphere'and(((t.x-a.x)^2+(t.y-a.y)^2+(t.z-a.z)^2)^.5<=n)then
+elseif e=='sphere'and(((t.x-a.x)^2+(t.y-a.y)^2+(t.z-a.z)^2)^.5<=s)then
 i[#i+1]=o
 break
 end
@@ -86400,8 +86400,8 @@ end
 end
 return i
 end
-function mist.getUnitsLOS(e,h,o,s,n)
-t:info("$1, $2, $3, $4, $5",e,h,o,s,n)
+function mist.getUnitsLOS(e,s,o,h,n)
+t:info("$1, $2, $3, $4, $5",e,s,o,h,n)
 n=n or math.huge
 local a={}
 local t={}
@@ -86428,8 +86428,8 @@ for i=1,#a do
 local r=false
 for o=1,#t do
 if n==math.huge or(mist.vec.mag(mist.vec.sub(a[i].pos,t[o].pos))<n)then
-local n={x=a[i].pos.x,y=a[i].pos.y+h,z=a[i].pos.z}
-local s={x=t[o].pos.x,y=t[o].pos.y+s,z=t[o].pos.z}
+local n={x=a[i].pos.x,y=a[i].pos.y+s,z=a[i].pos.z}
+local s={x=t[o].pos.x,y=t[o].pos.y+h,z=t[o].pos.z}
 if land.isVisible(n,s)then
 if r==false then
 r=true
@@ -86447,22 +86447,22 @@ end
 return e
 end
 function mist.getAvgPoint(t)
-local a,o,i,e=0,0,0,0
+local a,i,o,e=0,0,0,0
 for n=1,#t do
 local t=mist.utils.makeVec3(t[n])
 if t.z then
 a=a+t.x
-o=o+t.y
-i=i+t.z
+i=i+t.y
+o=o+t.z
 e=e+1
 end
 end
 if e~=0 then
-return{x=a/e,y=o/e,z=i/e}
+return{x=a/e,y=i/e,z=o/e}
 end
 end
 function mist.getAvgPos(t)
-local i,n,s,e=0,0,0,0
+local s,i,n,e=0,0,0,0
 for a=1,#t do
 local o
 if Unit.getByName(t[a])then
@@ -86473,15 +86473,15 @@ end
 if o then
 local t=o:getPosition().p
 if t then
-i=i+t.x
-n=n+t.y
-s=s+t.z
+s=s+t.x
+i=i+t.y
+n=n+t.z
 e=e+1
 end
 end
 end
 if e~=0 then
-return{x=i/e,y=n/e,z=s/e}
+return{x=s/e,y=i/e,z=n/e}
 end
 end
 function mist.getAvgGroupPos(e)
@@ -86513,25 +86513,25 @@ return mist.tostringLL(t,e,a,o)
 end
 end
 function mist.getBRString(e)
-local i=e.units
+local o=e.units
 local t=mist.utils.makeVec3(e.ref,0)
 local a=e.alt
-local o=e.metric
-local e=mist.getAvgPos(i)
+local i=e.metric
+local e=mist.getAvgPos(o)
 if e then
-local i={x=e.x-t.x,y=e.y-t.y,z=e.z-t.z}
-local i=mist.utils.getDir(i,t)
+local o={x=e.x-t.x,y=e.y-t.y,z=e.z-t.z}
+local o=mist.utils.getDir(o,t)
 local t=mist.utils.get2DDist(e,t)
 if a then
 a=e.y
 end
-return mist.tostringBR(i,t,a,o)
+return mist.tostringBR(o,t,a,i)
 end
 end
 function mist.getLeadingPos(e)
 local a=e.units
 local t=e.heading
-local h=e.radius
+local r=e.radius
 if e.headingDegrees then
 t=mist.utils.toRadian(e.headingDegrees)
 end
@@ -86545,47 +86545,47 @@ end
 if#e>0 then
 local a=-math.huge
 t=t*-1
-local n
+local h
 for o=1,#e do
 local e=mist.vec.rotateVec2(mist.utils.makeVec2(e[o]),t)
 if(not a)or a<e.x then
 a=e.x
-n=o
+h=o
 end
 end
-local s
-if h then
-local r=e[n]
-local n,i,o,t=0,0,0,0
+local i
+if r then
+local h=e[h]
+local o,n,s,t=0,0,0,0
 for a=1,#e do
-if mist.utils.get2DDist(r,e[a])<=h then
-n=n+e[a].x
-i=i+e[a].y
-o=o+e[a].z
+if mist.utils.get2DDist(h,e[a])<=r then
+o=o+e[a].x
+n=n+e[a].y
+s=s+e[a].z
 t=t+1
 end
 end
-s={x=n/t,y=i/t,z=o/t}
+i={x=o/t,y=n/t,z=s/t}
 else
-s=e[n]
+i=e[h]
 end
-return s
+return i
 end
 end
-function mist.getLeadingMGRSString(e)
-local t=mist.getLeadingPos(e)
-if t then
-local e=e.acc or 5
-return mist.tostringMGRS(coord.LLtoMGRS(coord.LOtoLL(t)),e)
+function mist.getLeadingMGRSString(t)
+local e=mist.getLeadingPos(t)
+if e then
+local t=t.acc or 5
+return mist.tostringMGRS(coord.LLtoMGRS(coord.LOtoLL(e)),t)
 end
 end
 function mist.getLeadingLLString(e)
 local t=mist.getLeadingPos(e)
 if t then
-local o=e.acc or 3
-local a=e.DMS
+local a=e.acc or 3
+local o=e.DMS
 local t,e=coord.LOtoLL(t)
-return mist.tostringLL(t,e,o,a)
+return mist.tostringLL(t,e,a,o)
 end
 end
 function mist.getLeadingBRString(a)
@@ -86603,12 +86603,12 @@ end
 return mist.tostringBR(a,t,o,i)
 end
 end
-function mist.getPathLength(a,e,o)
+function mist.getPathLength(a,e,i)
 local t=0
-local i=0 or cutOff
+local o=0 or cutOff
 local e={}
 for t=1,#a do
-if o then
+if i then
 table.insert(e,mist.utils.makeVec3GL(a[t]))
 else
 table.insert(e,mist.utils.makeVec3(a[t]))
@@ -86616,13 +86616,13 @@ end
 end
 for a=1,#e do
 if a+1<=#e then
-if o then
+if i then
 t=mist.utils.get3DDist(e[a],e[a+1])+t
 else
 t=mist.utils.get2DDist(e[a],e[a+1])+t
 end
 end
-if i~=0 and t>i then
+if o~=0 and t>o then
 return t,a
 end
 end
@@ -86633,30 +86633,30 @@ local t=mist.getPathLength(e)
 local i=t/a
 local t='vec2'
 local o={[1]=e[1]}
-local t=0
-for a=1,#e do
-if a+1<=#e then
-t=mist.utils.get2DDist(e[a],e[a+1])+t
-if t>i then
-t=0
+local a=0
+for t=1,#e do
+if t+1<=#e then
+a=mist.utils.get2DDist(e[t],e[t+1])+a
+if a>i then
+a=0
 if n then
 else
-table.insert(o,e[a])
+table.insert(o,e[t])
 end
 end
 end
 end
 return o
 end
-function mist.getPointAtDistanceOnPath(a,s,h,o)
+function mist.getPointAtDistanceOnPath(a,s,d,o)
 t:info('find distance: $1',s)
-local d=h or'roads'
+local h=d or'roads'
 local e={x=0,y=0,z=0}
 local e={}
 local r=o or'vec2'
 local o=0
 if a[1]and#a==2 then
-e=land.findPathOnRoads(d,a[1].x,a[1].y,a[2].x,a[2].y)
+e=land.findPathOnRoads(h,a[1].x,a[1].y,a[2].x,a[2].y)
 else
 e=a
 end
@@ -86676,8 +86676,8 @@ i=o-s
 end
 local t=mist.utils.getHeadingPoints(mist.utils.makeVec3(e[a]),mist.utils.makeVec3(e[a+1]))
 local o,n
-if h then
-o,n=land.getClosestPointOnRoads(d,mist.utils.round((math.cos(t)*i)+e[a].x,1),mist.utils.round((math.sin(t)*i)+e[a].y,1))
+if d then
+o,n=land.getClosestPointOnRoads(h,mist.utils.round((math.cos(t)*i)+e[a].x,1),mist.utils.round((math.sin(t)*i)+e[a].y,1))
 else
 o,n=mist.utils.round((math.cos(t)*i)+e[a].x,1),mist.utils.round((math.sin(t)*i)+e[a].y,1)
 end
@@ -86890,8 +86890,8 @@ if((type(e)=='table')and e.group and(type(e.group)=='table')and(#e.group>0))then
 for t,e in pairs(e.group)do
 if e and e.groupId==a then
 local t={}
-for e,a in pairs(e.units)do
-t[e]=a.payload
+for a,e in pairs(e.units)do
+t[a]=e.payload
 end
 return t
 end
@@ -86958,22 +86958,22 @@ else
 t:error('Missing field groupName or gpName in variable table')
 end
 local n=a.action
-local c=a.disperse or false
-local r=a.maxDisp or 200
-local u=a.radius or 0
-local m=a.innerRadius
-local d=false
+local m=a.disperse or false
+local d=a.maxDisp or 200
+local l=a.radius or 0
+local c=a.innerRadius
+local r=false
 local e
 if o and not a.groupData then
 if string.lower(n)=='teleport'or string.lower(n)=='tele'then
 e=mist.getCurrentGroupData(o)
 elseif string.lower(n)=='respawn'then
 e=mist.getGroupData(o)
-d=true
+r=true
 elseif string.lower(n)=='clone'then
 e=mist.getGroupData(o)
 e.clone='order66'
-d=true
+r=true
 else
 n='tele'
 e=mist.getCurrentGroupData(o)
@@ -86990,7 +86990,7 @@ t:warn('$1 has no units in group table',o)
 return
 end
 local h={x=0,y=0}
-local n,l
+local n,u
 local s={'LAND','ROAD','SHALLOW_WATER','WATER','RUNWAY'}
 if a.anyTerrain then
 elseif a.validTerrain then
@@ -87002,12 +87002,12 @@ elseif string.lower(e.category)=='vehicle'then
 s={'LAND','ROAD'}
 end
 end
-if i and u>=0 then
+if i and l>=0 then
 local o=false
 for t=1,100 do
-n=mist.getRandPointInCircle(i,u,m)
+n=mist.getRandPointInCircle(i,l,c)
 if a.anyTerrain or mist.isTerrainValid(n,s)then
-l=mist.utils.deepCopy(n)
+u=mist.utils.deepCopy(n)
 h={x=(n.x-e.units[1].x),y=(n.y-e.units[1].y)}
 o=true
 break
@@ -87025,11 +87025,11 @@ if not e.category and mist.DBs.groupsByName[e.groupName].category then
 e.category=mist.DBs.groupsByName[e.groupName].category
 end
 for t,o in pairs(e.units)do
-if c then
+if m then
 local a
-if r and type(r)=='number'and t~=1 then
+if d and type(d)=='number'and t~=1 then
 for e=1,100 do
-a=mist.getRandPointInCircle(l,r)
+a=mist.getRandPointInCircle(u,d)
 if mist.isTerrainValid(a,s)==true then
 break
 end
@@ -87063,7 +87063,7 @@ end
 if e.start_time then
 e.startTime=e.start_time
 end
-if e.startTime and e.startTime~=0 and d==true then
+if e.startTime and e.startTime~=0 and r==true then
 local t=timer.getAbsTime()-timer.getTime0()
 if t>e.startTime then
 e.startTime=0
@@ -87122,7 +87122,7 @@ end
 end
 return mist.teleportToPoint(a)
 end
-function mist.cloneInZone(a,e,n,i,o)
+function mist.cloneInZone(a,e,i,n,o)
 if type(a)=='table'then
 a=a:getName()
 else
@@ -87138,16 +87138,16 @@ t.gpName=a
 t.action='clone'
 t.point=e.point
 t.radius=e.radius
-t.disperse=n
-t.maxDisp=i
+t.disperse=i
+t.maxDisp=n
 if o and type(o)=='table'then
-for a,e in pairs(o)do
-t[a]=e
+for e,a in pairs(o)do
+t[e]=a
 end
 end
 return mist.teleportToPoint(t)
 end
-function mist.teleportInZone(a,e,n,i,o)
+function mist.teleportInZone(a,e,i,n,o)
 if type(a)=='table'and a:getName()then
 a=a:getName()
 else
@@ -87163,11 +87163,11 @@ t.gpName=a
 t.action='tele'
 t.point=e.point
 t.radius=e.radius
-t.disperse=n
-t.maxDisp=i
+t.disperse=i
+t.maxDisp=n
 if o and type(o)=='table'then
-for e,a in pairs(o)do
-t[e]=a
+for a,e in pairs(o)do
+t[a]=e
 end
 end
 return mist.teleportToPoint(t)
@@ -87232,23 +87232,23 @@ for a,e in pairs(e.exclude)do
 t[e]=true
 end
 end
-local i,n,a
+local n,i,a
 if e.size then
 a=e.size
 end
 if e and e.lowerLimit and type(e.lowerLimit)=='number'then
-i=mist.utils.round(e.lowerLimit)
+n=mist.utils.round(e.lowerLimit)
 else
-i=1
+n=1
 end
 if e and e.upperLimit and type(e.upperLimit)=='number'then
-n=mist.utils.round(e.upperLimit)
+i=mist.utils.round(e.upperLimit)
 else
-n=a
+i=a
 end
 local s={}
 for e=1,a do
-if not(e>=i and e<=n)then
+if not(e>=n and e<=i)then
 t[e]=true
 end
 if not t[e]then
@@ -87284,43 +87284,43 @@ local t=a
 if a.units then
 t=passUnits.units
 end
-local o={}
+local n={}
 local a={}
 if e and e.excludeType and type(e.excludeType)=='table'then
-o=e.excludeType
+n=e.excludeType
 end
 if e and e.excludeNum and type(e.excludeNum)=='table'then
 a=e.excludeNum
 end
-local n,a
+local a,i
 if e and e.lowerLimit and type(e.lowerLimit)=='number'then
-n=mist.utils.round(e.lowerLimit)
+a=mist.utils.round(e.lowerLimit)
 else
-n=1
+a=1
 end
 if e and e.upperLimit and type(e.upperLimit)=='number'then
-a=mist.utils.round(e.upperLimit)
+i=mist.utils.round(e.upperLimit)
 else
-a=#t
+i=#t
 end
-local i={}
-for e,t in pairs(t)do
-if e>=n and e<=a then
-local n=false
-if#o>0 then
-for a,o in pairs(o)do
-if mist.stringMatch(a,t.type)then
-i[e]=e
-n=true
+local o={}
+for e,s in pairs(t)do
+if e>=a and e<=i then
+local a=false
+if#n>0 then
+for t,i in pairs(n)do
+if mist.stringMatch(t,s.type)then
+o[e]=e
+a=true
 end
 end
 end
 else
-i[e]=unitId
+o[e]=unitId
 end
 end
 local a={}
-local i=mist.randomizeNumTable({exclude=i,size=#t})
+local i=mist.randomizeNumTable({exclude=o,size=#t})
 for n,o in pairs(t)do
 for e=1,#i do
 if i[e]==n then
@@ -87334,14 +87334,14 @@ end
 end
 return a
 end
-function mist.random(a,o)
+function mist.random(o,a)
 local e,t
-if not o then
-t=a
+if not a then
+t=o
 e=1
 else
-e=a
-t=o
+e=o
+t=a
 end
 local o=1
 if math.abs(t-e+1)<50 then
@@ -87664,14 +87664,14 @@ e=mist.utils.makeVec3(e)
 a=mist.utils.makeVec3(a)
 return mist.vec.mag({x=e.x-a.x,y=0,z=e.z-a.z})
 end
-function mist.utils.get3DDist(a,e)
-if not a then
+function mist.utils.get3DDist(e,a)
+if not e then
 t:warn("mist.utils.get2DDist  1st input value is nil")
 end
-if not e then
+if not a then
 t:warn("mist.utils.get2DDist  2nd input value is nil")
 end
-return mist.vec.mag({x=a.x-e.x,y=a.y-e.y,z=a.z-e.z})
+return mist.vec.mag({x=e.x-a.x,y=e.y-a.y,z=e.z-a.z})
 end
 function mist.utils.vecToWP(e)
 local t={}
@@ -87702,30 +87702,30 @@ t:error("$1 not found or doesn't exist",a)
 return false
 end
 function mist.utils.deepCopy(i)
-local a={}
-local function t(e)
+local t={}
+local function a(e)
 if type(e)~="table"then
 return e
-elseif a[e]then
-return a[e]
+elseif t[e]then
+return t[e]
 end
 local o={}
-a[e]=o
-for a,e in pairs(e)do
-o[t(a)]=t(e)
+t[e]=o
+for e,t in pairs(e)do
+o[a(e)]=a(t)
 end
 return setmetatable(o,getmetatable(e))
 end
-return t(i)
+return a(i)
 end
 function mist.utils.round(t,e)
 local e=10^(e or 0)
 return math.floor(t*e+.5)/e
 end
-function mist.utils.roundTbl(e,o)
-for a,t in pairs(e)do
+function mist.utils.roundTbl(e,a)
+for o,t in pairs(e)do
 if type(t)=='number'then
-e[a]=mist.utils.round(t,o)
+e[o]=mist.utils.round(t,a)
 end
 end
 return e
@@ -87797,8 +87797,8 @@ return e
 end
 end
 end
-function mist.utils.serialize(n,s,h)
-local function r(e)
+function mist.utils.serialize(d,r,h)
+local function n(e)
 if type(e)=="number"then
 return tostring(e)
 elseif type(e)=="boolean"then
@@ -87807,7 +87807,7 @@ else
 return mist.utils.basicSerialize(e)
 end
 end
-local function d(i,a,e)
+local function s(i,a,e)
 local o={}
 if e==nil then
 e=""
@@ -87817,7 +87817,7 @@ e=e..""
 end
 table.insert(o,e..i.." = ")
 if type(a)=="number"or type(a)=="string"or type(a)=="boolean"then
-table.insert(o,r(a)..",\n")
+table.insert(o,n(a)..",\n")
 elseif type(a)=="table"then
 table.insert(o,"\n"..e.."{\n")
 for t,i in pairs(a)do
@@ -87839,7 +87839,7 @@ t:error('Cannot serialize a $1',type(a))
 end
 return o
 end
-local e=d(n,s,h)
+local e=s(d,r,h)
 return table.concat(e)
 end
 function mist.utils.serializeWithCycles(o,e,a)
@@ -88152,8 +88152,8 @@ end
 end
 do
 mist.vec={}
-function mist.vec.add(t,e)
-return{x=t.x+e.x,y=t.y+e.y,z=t.z+e.z}
+function mist.vec.add(e,t)
+return{x=e.x+t.x,y=e.y+t.y,z=e.z+t.z}
 end
 function mist.vec.sub(e,t)
 return{x=e.x-t.x,y=e.y-t.y,z=e.z-t.z}
@@ -88162,8 +88162,8 @@ function mist.vec.scalarMult(e,t)
 return{x=e.x*t,y=e.y*t,z=e.z*t}
 end
 mist.vec.scalar_mult=mist.vec.scalarMult
-function mist.vec.dp(e,t)
-return e.x*t.x+e.y*t.y+e.z*t.z
+function mist.vec.dp(t,e)
+return t.x*e.x+t.y*e.y+t.z*e.z
 end
 function mist.vec.cp(e,t)
 return{x=e.y*t.z-e.z*t.y,y=e.z*t.x-e.x*t.z,z=e.x*t.y-e.y*t.x}
@@ -88178,10 +88178,10 @@ end
 function mist.vec.rotateVec2(e,t)
 return{x=e.x*math.cos(t)-e.y*math.sin(t),y=e.x*math.sin(t)+e.y*math.cos(t)}
 end
-function mist.vec.normalize(e)
-local t=mist.vec.mag(e)
-if t~=0 then
-return mist.vec.scalar_mult(e,1./t)
+function mist.vec.normalize(t)
+local e=mist.vec.mag(t)
+if e~=0 then
+return mist.vec.scalar_mult(t,1./e)
 end
 end
 end
@@ -88223,8 +88223,8 @@ flag={'number','string'},
 [{'stopflag','stopFlag'}]={'number','string','nil'},
 [{'req_num','reqnum'}]={'number','nil'},
 }
-local a,t=mist.utils.typeCheck('mist.flagFunc.mapobjs_dead_polygon',t,e)
-assert(a,t)
+local t,a=mist.utils.typeCheck('mist.flagFunc.mapobjs_dead_polygon',t,e)
+assert(t,a)
 local o=e.zone or e.polyzone
 local a=e.flag
 local t=e.stopflag or e.stopFlag or-1
@@ -88254,45 +88254,45 @@ interval={'number','nil'},
 toggle={'boolean','nil'},
 unitTableDef={'table','nil'},
 }
-local a,t=mist.utils.typeCheck('mist.flagFunc.units_in_polygon',t,e)
-assert(a,t)
+local t,a=mist.utils.typeCheck('mist.flagFunc.units_in_polygon',t,e)
+assert(t,a)
 local t=e.units or e.unit
 local s=e.zone or e.polyzone
 local o=e.flag
 local a=e.stopflag or e.stopFlag or-1
-local d=e.interval or 1
-local h=e.maxalt or e.alt
+local h=e.interval or 1
+local r=e.maxalt or e.alt
 local n=e.req_num or e.reqnum or 1
-local r=e.toggle or nil
-local i=e.unitTableDef
+local d=e.toggle or nil
+local e=e.unitTableDef
 if not t.processed then
-i=mist.utils.deepCopy(t)
+e=mist.utils.deepCopy(t)
 end
 if(t.processed and t.processed<mist.getLastDBUpdateTime())or not t.processed then
-if i then
-t=mist.makeUnitTable(i)
+if e then
+t=mist.makeUnitTable(e)
 end
 end
 if a==-1 or(type(trigger.misc.getUserFlag(a))=='number'and trigger.misc.getUserFlag(a)==0)or(type(trigger.misc.getUserFlag(a))=='boolean'and trigger.misc.getUserFlag(a)==0)then
-local e=0
-for a=1,#t do
-local t=Unit.getByName(t[a])or StaticObject.getByName(t[a])
-if t then
-local t=t:getPosition().p
-if mist.pointInPolygon(t,s,h)then
-e=e+1
-if e>=n and trigger.misc.getUserFlag(o)==0 then
+local i=0
+for e=1,#t do
+local e=Unit.getByName(t[e])or StaticObject.getByName(t[e])
+if e then
+local e=e:getPosition().p
+if mist.pointInPolygon(e,s,r)then
+i=i+1
+if i>=n and trigger.misc.getUserFlag(o)==0 then
 trigger.action.setUserFlag(o,true)
 break
 end
 end
 end
 end
-if r and(e<n)and trigger.misc.getUserFlag(o)>0 then
+if d and(i<n)and trigger.misc.getUserFlag(o)>0 then
 trigger.action.setUserFlag(o,false)
 end
 if(type(trigger.misc.getUserFlag(a))=='number'and trigger.misc.getUserFlag(a)==0)or(type(trigger.misc.getUserFlag(a))=='boolean'and trigger.misc.getUserFlag(a)==0)then
-mist.scheduleFunction(mist.flagFunc.units_in_polygon,{{units=t,zone=s,flag=o,stopflag=a,interval=d,req_num=n,maxalt=h,toggle=r,unitTableDef=i}},timer.getTime()+d)
+mist.scheduleFunction(mist.flagFunc.units_in_polygon,{{units=t,zone=s,flag=o,stopflag=a,interval=h,req_num=n,maxalt=r,toggle=d,unitTableDef=e}},timer.getTime()+h)
 end
 end
 end
@@ -88308,16 +88308,16 @@ interval={'number','nil'},
 toggle={'boolean','nil'},
 unitTableDef={'table','nil'},
 }
-local a,t=mist.utils.typeCheck('mist.flagFunc.units_in_zones',t,e)
-assert(a,t)
+local t,a=mist.utils.typeCheck('mist.flagFunc.units_in_zones',t,e)
+assert(t,a)
 local a=e.units
-local n=e.zones
+local d=e.zones
 local o=e.flag
 local t=e.stopflag or e.stopFlag or-1
-local s=e.zone_type or e.zonetype or'cylinder'
+local r=e.zone_type or e.zonetype or'cylinder'
 local i=e.req_num or e.reqnum or 1
-local d=e.interval or 1
-local r=e.toggle or nil
+local n=e.interval or 1
+local h=e.toggle or nil
 local e=e.unitTableDef
 if not a.processed then
 e=mist.utils.deepCopy(a)
@@ -88328,14 +88328,14 @@ a=mist.makeUnitTable(e)
 end
 end
 if t==-1 or(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-local h=mist.getUnitsInZones(a,n,s)
-if#h>=i and trigger.misc.getUserFlag(o)==0 then
+local s=mist.getUnitsInZones(a,d,r)
+if#s>=i and trigger.misc.getUserFlag(o)==0 then
 trigger.action.setUserFlag(o,true)
-elseif#h<i and r then
+elseif#s<i and h then
 trigger.action.setUserFlag(o,false)
 end
 if(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-mist.scheduleFunction(mist.flagFunc.units_in_zones,{{units=a,zones=n,flag=o,stopflag=t,zone_type=s,req_num=i,interval=d,toggle=r,unitTableDef=e}},timer.getTime()+d)
+mist.scheduleFunction(mist.flagFunc.units_in_zones,{{units=a,zones=d,flag=o,stopflag=t,zone_type=r,req_num=i,interval=n,toggle=h,unitTableDef=e}},timer.getTime()+n)
 end
 end
 end
@@ -88353,17 +88353,17 @@ toggle={'boolean','nil'},
 unitTableDef={'table','nil'},
 zUnitTableDef={'table','nil'},
 }
-local a,t=mist.utils.typeCheck('mist.flagFunc.units_in_moving_zones',t,e)
-assert(a,t)
+local t,a=mist.utils.typeCheck('mist.flagFunc.units_in_moving_zones',t,e)
+assert(t,a)
 local a=e.units
 local o=e.zone_units or e.zoneunits
-local u=e.radius
+local h=e.radius
 local i=e.flag
 local t=e.stopflag or e.stopFlag or-1
-local d=e.zone_type or e.zonetype or'cylinder'
+local u=e.zone_type or e.zonetype or'cylinder'
 local s=e.req_num or e.reqnum or 1
-local r=e.interval or 1
-local h=e.toggle or nil
+local d=e.interval or 1
+local l=e.toggle or nil
 local n=e.unitTableDef
 local e=e.zUnitTableDef
 if not a.processed then
@@ -88383,14 +88383,14 @@ o=mist.makeUnitTable(e)
 end
 end
 if t==-1 or(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-local l=mist.getUnitsInMovingZones(a,o,u,d)
-if#l>=s and trigger.misc.getUserFlag(i)==0 then
+local r=mist.getUnitsInMovingZones(a,o,h,u)
+if#r>=s and trigger.misc.getUserFlag(i)==0 then
 trigger.action.setUserFlag(i,true)
-elseif#l<s and h then
+elseif#r<s and l then
 trigger.action.setUserFlag(i,false)
 end
 if(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-mist.scheduleFunction(mist.flagFunc.units_in_moving_zones,{{units=a,zone_units=o,radius=u,flag=i,stopflag=t,zone_type=d,req_num=s,interval=r,toggle=h,unitTableDef=n,zUnitTableDef=e}},timer.getTime()+r)
+mist.scheduleFunction(mist.flagFunc.units_in_moving_zones,{{units=a,zone_units=o,radius=h,flag=i,stopflag=t,zone_type=u,req_num=s,interval=d,toggle=l,unitTableDef=n,zUnitTableDef=e}},timer.getTime()+d)
 end
 end
 end
@@ -88412,15 +88412,15 @@ unitTableDef2={'table','nil'},
 local a,t=mist.utils.typeCheck('mist.flagFunc.units_LOS',t,e)
 assert(a,t)
 local o=e.unitset1 or e.units1
-local c=e.altoffset1 or e.alt1
+local u=e.altoffset1 or e.alt1
 local a=e.unitset2 or e.units2
-local u=e.altoffset2 or e.alt2
+local h=e.altoffset2 or e.alt2
 local i=e.flag
 local t=e.stopflag or e.stopFlag or-1
-local r=e.interval or 1
-local h=e.radius or math.huge
+local d=e.interval or 1
+local l=e.radius or math.huge
 local s=e.req_num or e.reqnum or 1
-local l=e.toggle or nil
+local c=e.toggle or nil
 local n=e.unitTableDef1
 local e=e.unitTableDef2
 if not o.processed then
@@ -88440,14 +88440,14 @@ a=mist.makeUnitTable(e)
 end
 end
 if t==-1 or(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-local d=mist.getUnitsLOS(o,c,a,u,h)
-if#d>=s and trigger.misc.getUserFlag(i)==0 then
+local r=mist.getUnitsLOS(o,u,a,h,l)
+if#r>=s and trigger.misc.getUserFlag(i)==0 then
 trigger.action.setUserFlag(i,true)
-elseif#d<s and l then
+elseif#r<s and c then
 trigger.action.setUserFlag(i,false)
 end
 if(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-mist.scheduleFunction(mist.flagFunc.units_LOS,{{unitset1=o,altoffset1=c,unitset2=a,altoffset2=u,flag=i,stopflag=t,radius=h,req_num=s,interval=r,toggle=l,unitTableDef1=n,unitTableDef2=e}},timer.getTime()+r)
+mist.scheduleFunction(mist.flagFunc.units_LOS,{{unitset1=o,altoffset1=u,unitset2=a,altoffset2=h,flag=i,stopflag=t,radius=l,req_num=s,interval=d,toggle=c,unitTableDef1=n,unitTableDef2=e}},timer.getTime()+d)
 end
 end
 end
@@ -88461,24 +88461,24 @@ toggle={'boolean','nil'},
 }
 local a,t=mist.utils.typeCheck('mist.flagFunc.group_alive',t,e)
 assert(a,t)
-local a=e.groupName or e.group or e.gp or e.Groupname
-local o=e.flag
+local o=e.groupName or e.group or e.gp or e.Groupname
+local a=e.flag
 local t=e.stopflag or e.stopFlag or-1
 local i=e.interval or 1
 local e=e.toggle or nil
 if t==-1 or(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-if Group.getByName(a)and Group.getByName(a):isExist()==true and#Group.getByName(a):getUnits()>0 then
-if trigger.misc.getUserFlag(o)==0 then
-trigger.action.setUserFlag(o,true)
+if Group.getByName(o)and Group.getByName(o):isExist()==true and#Group.getByName(o):getUnits()>0 then
+if trigger.misc.getUserFlag(a)==0 then
+trigger.action.setUserFlag(a,true)
 end
 else
 if e then
-trigger.action.setUserFlag(o,false)
+trigger.action.setUserFlag(a,false)
 end
 end
 end
 if(type(trigger.misc.getUserFlag(t))=='number'and trigger.misc.getUserFlag(t)==0)or(type(trigger.misc.getUserFlag(t))=='boolean'and trigger.misc.getUserFlag(t)==false)then
-mist.scheduleFunction(mist.flagFunc.group_alive,{{groupName=a,flag=o,stopflag=t,interval=i,toggle=e}},timer.getTime()+i)
+mist.scheduleFunction(mist.flagFunc.group_alive,{{groupName=o,flag=a,stopflag=t,interval=i,toggle=e}},timer.getTime()+i)
 end
 end
 function mist.flagFunc.group_dead(t)
@@ -88489,8 +88489,8 @@ flag={'number','string'},
 interval={'number','nil'},
 toggle={'boolean','nil'},
 }
-local a,e=mist.utils.typeCheck('mist.flagFunc.group_dead',e,t)
-assert(a,e)
+local e,a=mist.utils.typeCheck('mist.flagFunc.group_dead',e,t)
+assert(e,a)
 local a=t.groupName or t.group or t.gp or t.Groupname
 local o=t.flag
 local e=t.stopflag or t.stopFlag or-1
@@ -88558,8 +88558,8 @@ flag={'number','string'},
 interval={'number','nil'},
 toggle={'boolean','nil'},
 }
-local a,t=mist.utils.typeCheck('mist.flagFunc.group_alive_more_than',t,e)
-assert(a,t)
+local t,a=mist.utils.typeCheck('mist.flagFunc.group_alive_more_than',t,e)
+assert(t,a)
 local o=e.groupName or e.group or e.gp or e.Groupname
 local a=e.flag
 local n=e.percent
@@ -88600,10 +88600,10 @@ mist.flagFunc.groupAliveLessThan=mist.flagFunc.group_alive_less_than
 end
 do
 local e={}
-local d=.1
+local r=.1
 local s=0
 local i=false
-local r=0
+local d=0
 local h=false
 local l=false
 local n=false
@@ -88702,9 +88702,9 @@ if a.BLUE then
 trigger.action.outTextForCoalition(coalition.side.BLUE,table.concat(a.BLUE.text),a.BLUE.displayTime,s)
 end
 end
-for e,t in pairs(a)do
-if type(e)=='number'then
-trigger.action.outTextForGroup(e,table.concat(t.text),t.displayTime,s)
+for t,e in pairs(a)do
+if type(t)=='number'then
+trigger.action.outTextForGroup(t,table.concat(e.text),e.displayTime,s)
 end
 end
 if o.RED then
@@ -88720,15 +88720,15 @@ end
 end
 end
 else
-mist.removeFunction(r)
+mist.removeFunction(d)
 i=false
 end
 end
 local function t()
-local n={}
+local s={}
 for t,e in pairs(mist.DBs.humansById)do
 if Unit.getByName(e.unitName)and Unit.getByName(e.unitName):isExist()==true then
-n[e.groupId]=e.groupName
+s[e.groupId]=e.groupName
 end
 end
 if#e>0 then
@@ -88742,14 +88742,14 @@ if a.displayedFor>a.displayTime then
 a:remove()
 else
 if a.displayedFor then
-a.displayedFor=a.displayedFor+d
+a.displayedFor=a.displayedFor+r
 end
-local s=1000
+local n=1000
 local i=0
 if a.multSound and#a.multSound>0 then
 for t,e in pairs(a.multSound)do
-if e.time<=a.displayedFor and e.played==false and e.time<s then
-s=e.time
+if e.time<=a.displayedFor and e.played==false and e.time<n then
+n=e.time
 i=t
 end
 end
@@ -88757,8 +88757,8 @@ if i~=0 then
 a.multSound[i].played=true
 end
 end
-for s,e in pairs(a.msgFor)do
-if e=='RED'or e=='BLUE'or n[e]then
+for n,e in pairs(a.msgFor)do
+if e=='RED'or e=='BLUE'or s[e]then
 if a.text then
 if not t[e]then
 t[e]={}
@@ -88797,9 +88797,9 @@ if t.BLUE then
 trigger.action.outTextForCoalition(coalition.side.BLUE,table.concat(t.BLUE.text),t.BLUE.displayTime,true)
 end
 end
-for t,e in pairs(t)do
-if type(t)=='number'then
-trigger.action.outTextForGroup(t,table.concat(e.text),e.displayTime,true)
+for e,t in pairs(t)do
+if type(e)=='number'then
+trigger.action.outTextForGroup(e,table.concat(t.text),t.displayTime,true)
 end
 end
 if o.RED then
@@ -88814,7 +88814,7 @@ trigger.action.outSoundForGroup(e,t)
 end
 end
 else
-mist.removeFunction(r)
+mist.removeFunction(d)
 i=false
 end
 end
@@ -88936,7 +88936,7 @@ local e={__index=mist.message}
 setmetatable(t,e)
 if i==false then
 i=true
-r=mist.scheduleFunction(u,{},timer.getTime()+d,d)
+d=mist.scheduleFunction(u,{},timer.getTime()+r,r)
 end
 return s
 end,
@@ -88962,12 +88962,12 @@ return false
 end,
 }
 function mist.msgMGRS(e)
-local n=e.units
+local i=e.units
 local a=e.acc
 local t=e.text
-local i=e.displayTime
-local o=e.msgFor
-local a=mist.getMGRSString{units=n,acc=a}
+local o=e.displayTime
+local n=e.msgFor
+local a=mist.getMGRSString{units=i,acc=a}
 local e
 if t then
 if string.find(t,'%%s')then
@@ -88980,18 +88980,18 @@ e=a
 end
 mist.message.add{
 text=e,
-displayTime=i,
-msgFor=o
+displayTime=o,
+msgFor=n
 }
 end
 function mist.msgLL(e)
-local a=e.units
-local o=e.acc
+local o=e.units
+local a=e.acc
 local i=e.DMS
 local t=e.text
 local s=e.displayTime
 local n=e.msgFor
-local a=mist.getLLString{units=a,acc=o,DMS=i}
+local a=mist.getLLString{units=o,acc=a,DMS=i}
 local e
 if t then
 if string.find(t,'%%s')then
@@ -89009,14 +89009,14 @@ msgFor=n
 }
 end
 function mist.msgBR(e)
-local a=e.units
-local n=e.ref
-local h=e.alt
-local s=e.metric
+local n=e.units
+local o=e.ref
+local a=e.alt
+local i=e.metric
 local t=e.text
-local o=e.displayTime
-local i=e.msgFor
-local a=mist.getBRString{units=a,ref=n,alt=h,metric=s}
+local s=e.displayTime
+local h=e.msgFor
+local a=mist.getBRString{units=n,ref=o,alt=a,metric=i}
 local e
 if t then
 if string.find(t,'%%s')then
@@ -89029,8 +89029,8 @@ e=a
 end
 mist.message.add{
 text=e,
-displayTime=o,
-msgFor=i
+displayTime=s,
+msgFor=h
 }
 end
 function mist.msgBullseye(e)
@@ -89049,42 +89049,15 @@ mist.msgBR(e)
 end
 end
 function mist.msgLeadingMGRS(e)
-local i=e.units
-local o=e.heading
-local a=e.radius
-local n=e.headingDegrees
-local h=e.acc
-local t=e.text
-local s=e.displayTime
-local r=e.msgFor
-local a=mist.getLeadingMGRSString{units=i,heading=o,radius=a,headingDegrees=n,acc=h}
-local e
-if t then
-if string.find(t,'%%s')then
-e=string.format(t,a)
-else
-e=t..a
-end
-else
-e=a
-end
-mist.message.add{
-text=e,
-displayTime=s,
-msgFor=r
-}
-end
-function mist.msgLeadingLL(e)
-local d=e.units
-local i=e.heading
-local a=e.radius
-local s=e.headingDegrees
-local r=e.acc
-local h=e.DMS
+local s=e.units
+local n=e.heading
+local r=e.radius
+local h=e.headingDegrees
+local a=e.acc
 local t=e.text
 local o=e.displayTime
-local n=e.msgFor
-local a=mist.getLeadingLLString{units=d,heading=i,radius=a,headingDegrees=s,acc=r,DMS=h}
+local i=e.msgFor
+local a=mist.getLeadingMGRSString{units=s,heading=n,radius=r,headingDegrees=h,acc=a}
 local e
 if t then
 if string.find(t,'%%s')then
@@ -89098,21 +89071,20 @@ end
 mist.message.add{
 text=e,
 displayTime=o,
-msgFor=n
+msgFor=i
 }
 end
-function mist.msgLeadingBR(e)
-local d=e.units
-local i=e.heading
-local o=e.radius
-local a=e.headingDegrees
-local n=e.metric
-local h=e.alt
-local s=e.ref
+function mist.msgLeadingLL(e)
+local i=e.units
+local o=e.heading
+local a=e.radius
+local n=e.headingDegrees
+local h=e.acc
+local s=e.DMS
 local t=e.text
-local r=e.displayTime
-local l=e.msgFor
-local a=mist.getLeadingBRString{units=d,heading=i,radius=o,headingDegrees=a,metric=n,alt=h,ref=s}
+local d=e.displayTime
+local r=e.msgFor
+local a=mist.getLeadingLLString{units=i,heading=o,radius=a,headingDegrees=n,acc=h,DMS=s}
 local e
 if t then
 if string.find(t,'%%s')then
@@ -89125,16 +89097,44 @@ e=a
 end
 mist.message.add{
 text=e,
-displayTime=r,
-msgFor=l
+displayTime=d,
+msgFor=r
+}
+end
+function mist.msgLeadingBR(e)
+local l=e.units
+local d=e.heading
+local h=e.radius
+local r=e.headingDegrees
+local s=e.metric
+local n=e.alt
+local a=e.ref
+local t=e.text
+local i=e.displayTime
+local o=e.msgFor
+local a=mist.getLeadingBRString{units=l,heading=d,radius=h,headingDegrees=r,metric=s,alt=n,ref=a}
+local e
+if t then
+if string.find(t,'%%s')then
+e=string.format(t,a)
+else
+e=t..a
+end
+else
+e=a
+end
+mist.message.add{
+text=e,
+displayTime=i,
+msgFor=o
 }
 end
 end
 do
 mist.demos={}
-function mist.demos.printFlightData(d)
-if d:isExist()then
-local function p(i,d,m,o)
+function mist.demos.printFlightData(l)
+if l:isExist()then
+local function b(i,d,f,o)
 local t=mist.getAttitude(i)
 if t then
 local s=t.Heading
@@ -89180,30 +89180,30 @@ end
 local l=i:getPosition()
 local t=i:getVelocity()
 local i=timer.getTime()
-local v=string.format('%12.2f',mist.vec.mag(t))
-local f='NA'
+local p=string.format('%12.2f',mist.vec.mag(t))
 local w='NA'
-local u='NA'
 local c='NA'
+local u='NA'
+local m='NA'
 if d and o then
 local a=(t.x-d.x)/(i-o)
 local e=(t.y-d.y)/(i-o)
 local t=(t.z-d.z)/(i-o)
-f=string.format('%12.2f',mist.vec.mag({x=a,y=e,z=t}))
-w=string.format('%12.2f',mist.vec.mag({x=a,y=e+9.81,z=t})/9.81)
+w=string.format('%12.2f',mist.vec.mag({x=a,y=e,z=t}))
+c=string.format('%12.2f',mist.vec.mag({x=a,y=e+9.81,z=t})/9.81)
 u=string.format('%12.2f',mist.vec.dp({x=a,y=e+9.81,z=t},l.x)/9.81)
-c=string.format('%12.2f',mist.vec.mag(mist.vec.cp({x=a,y=e+9.81,z=t},l.x))/9.81)
+m=string.format('%12.2f',mist.vec.mag(mist.vec.cp({x=a,y=e+9.81,z=t},l.x))/9.81)
 end
 local d=.5*mist.vec.mag(t)^2+9.81*l.p.y
-local p=string.format('%12.2e',d)
+local v=string.format('%12.2e',d)
 local l='NA'
-if m and o then
-l=string.format('%12.2e',(d-m)/(i-o))
+if f and o then
+l=string.format('%12.2e',(d-f)/(i-o))
 end
 trigger.action.outText(string.format('%-25s','Heading: ')..s..' degrees\n'..string.format('%-25s','Roll: ')..r..' degrees\n'..string.format('%-25s','Pitch: ')..h
 ..' degrees\n'..string.format('%-25s','Yaw: ')..e..' degrees\n'..string.format('%-25s','AoA: ')..a..' degrees\n'..string.format('%-25s','AoA plus Yaw: ')..y..' degrees\n'..string.format('%-25s','Climb Angle: ')..
-n..' degrees\n'..string.format('%-25s','Absolute Velocity: ')..v..' m/s\n'..string.format('%-25s','Absolute Acceleration: ')..f..' m/s^2\n'
-..string.format('%-25s','Axial G loading: ')..u..' g\n'..string.format('%-25s','Transverse G loading: ')..c..' g\n'..string.format('%-25s','Absolute G loading: ')..w..' g\n'..string.format('%-25s','Energy: ')..p..' J/kg\n'..string.format('%-25s','dE/dt: ')..l..' J/(kg*s)',1)
+n..' degrees\n'..string.format('%-25s','Absolute Velocity: ')..p..' m/s\n'..string.format('%-25s','Absolute Acceleration: ')..w..' m/s^2\n'
+..string.format('%-25s','Axial G loading: ')..u..' g\n'..string.format('%-25s','Transverse G loading: ')..m..' g\n'..string.format('%-25s','Absolute G loading: ')..c..' g\n'..string.format('%-25s','Energy: ')..v..' J/kg\n'..string.format('%-25s','dE/dt: ')..l..' J/(kg*s)',1)
 return t,d,i
 end
 end
@@ -89211,15 +89211,15 @@ local function n(a,e,i,t)
 if a:isExist()then
 local o=a:getVelocity()
 if e and(e.x~=o.x or e.y~=o.y or e.z~=o.z)or(t and(timer.getTime()-t)>.25)then
-e,i,t=p(a,e,i,t)
+e,i,t=b(a,e,i,t)
 end
 mist.scheduleFunction(n,{a,e,i,t},timer.getTime()+.005)
 end
 end
-local e=d:getVelocity()
-local a=timer.getTime()
-local t=.5*mist.vec.mag(e)^2+9.81*d:getPosition().p.y
-n(d,e,t,a)
+local e=l:getVelocity()
+local t=timer.getTime()
+local a=.5*mist.vec.mag(e)^2+9.81*l:getPosition().p.y
+n(l,e,a,t)
 end
 end
 end
@@ -89235,11 +89235,11 @@ coa={
 }
 local t={['red']={},['blue']={},['all']={},['neutral']={}}
 local a=1000
-local p={'line','circle','rect','arrow','text','quad','freeform'}
+local v={'line','circle','rect','arrow','text','quad','freeform'}
 local e={[0]='no line',[1]='solid',[2]='dashed',[3]='dotted',[4]='dot dash',[5]='long dash',[6]='two dash'}
 local w={[-1]='all',[0]='neutral',[1]='red',[2]='blue'}
 local e={['poly']=7,['lines']=1,['polygon']=7}
-local function v(e)
+local function p(e)
 if type(e)=='table'then
 local t=e.markType
 if t=='panel'then
@@ -89290,7 +89290,7 @@ end
 end
 return mist.utils.deepCopy(a)
 end
-local function z(e)
+local function _(e)
 if type(e)=='table'then
 for t=1,#e do
 if type(e[t])=='number'and e[t]>1 then
@@ -89302,7 +89302,7 @@ e=mist.utils.hexToRGB(e)
 end
 return e
 end
-local function b(o,a)
+local function g(o,a)
 local e
 if type(a)=='number'then
 if w[a]then
@@ -89320,8 +89320,8 @@ end
 function mist.marker.getNextId()
 return m()
 end
-local a={}
-function a:onEvent(e)
+local o={}
+function o:onEvent(e)
 if world.event.S_EVENT_MARK_ADDED==e.id and e.idx then
 h[e.idx]=e.idx
 if not mist.DBs.markList[e.idx]then
@@ -89340,7 +89340,7 @@ mist.DBs.markList[e.idx]=nil
 end
 end
 end
-local function o(e)
+local function a(e)
 if mist.DBs.markList[e]then
 return e
 else
@@ -89351,11 +89351,11 @@ end
 end
 end
 end
-local function q(e)
+local function b(e)
 local t=false
 if type(e)=='table'then
-for a,e in pairs(e)do
-local e=o(e)
+for o,e in pairs(e)do
+local e=a(e)
 if e then
 trigger.action.removeMark(e)
 mist.DBs.markList[e]=nil
@@ -89363,14 +89363,14 @@ t=true
 end
 end
 else
-local e=o(e)
+local e=a(e)
 trigger.action.removeMark(e)
 mist.DBs.markList[e]=nil
 t=true
 end
 return t
 end
-world.addEventHandler(a)
+world.addEventHandler(o)
 function mist.marker.setDefault(e)
 local o=false
 if e and type(e)=='table'then
@@ -89400,10 +89400,10 @@ local i=e.id or e.markId or e.markid
 local a=e.mType or e.markType or e.type or 0
 local f=e.color
 local c=e.fillColor
-local k=e.lineType or 2
+local q=e.lineType or 2
 local y=e.readOnly or true
-local _=e.message
-local g=e.fontSize
+local z=e.message
+local k=e.fontSize
 local o=e.name
 local j=e.radius or 500
 local r=-1
@@ -89416,11 +89416,11 @@ end
 local e=i or o
 if mist.DBs.markList[i]then
 o=mist.DBs.markList[i].name or i
-q(i)
+b(i)
 elseif h[i]then
-q(h[i])
+b(h[i])
 elseif o and h[o]then
-q(h[o])
+b(h[o])
 end
 s=m()
 h[i]=s
@@ -89433,13 +89433,13 @@ s=m()
 end
 if a then
 if type(a)=='string'then
-for e=1,#p do
-if mist.stringMatch(a,p[e])then
+for e=1,#v do
+if mist.stringMatch(a,v[e])then
 a=e
 break
 end
 end
-elseif type(a)=='number'and a>#p then
+elseif type(a)=='number'and a>#v then
 a=0
 end
 end
@@ -89573,12 +89573,12 @@ local a=m()
 local e={markId=a,text=u,pos=t[e],markFor=l[e],markType='panel',name=o,readOnly=y,time=timer.getTime()}
 mist.DBs.markList[a]=e
 table.insert(n,e)
-v(e)
+p(e)
 end
 return n
 end
 end
-v(a)
+p(a)
 return a
 elseif a>0 then
 local e=m()
@@ -89613,28 +89613,28 @@ if j and a==2 then
 e[#e+1]=j
 end
 if not f then
-f=b('color',r)
+f=g('color',r)
 else
-f=z(f)
+f=_(f)
 end
 e[#e+1]=f
 if not c then
-c=b('fillColor',r)
+c=g('fillColor',r)
 else
-c=z(c)
+c=_(c)
 end
 e[#e+1]=c
 if a==5 then
-if not g then
-g=b('fontSize',r)or 16
-end
-e[#e+1]=g
-else
 if not k then
-k=b('lineType',r)or 2
-end
+k=g('fontSize',r)or 16
 end
 e[#e+1]=k
+else
+if not q then
+q=g('lineType',r)or 2
+end
+end
+e[#e+1]=q
 if not y then
 y=true
 end
@@ -89642,9 +89642,9 @@ e[#e+1]=y
 if a==5 then
 e[#e+1]=u
 else
-e[#e+1]=_
+e[#e+1]=z
 end
-local i={coa=r,markId=s,pos=t,markFor=n,color=f,readOnly=y,message=_,fillColor=c,lineType=k,markType=p[a],name=o,radius=j,text=u,fontSize=g,time=timer.getTime()}
+local i={coa=r,markId=s,pos=t,markFor=n,color=f,readOnly=y,message=z,fillColor=c,lineType=q,markType=v[a],name=o,radius=j,text=u,fontSize=k,time=timer.getTime()}
 mist.DBs.markList[s]=i
 if a==7 or a==1 then
 local t="trigger.action.markupToAll("
@@ -89662,15 +89662,15 @@ t=t..')'
 if o then
 h[o]=s
 end
-v(t)
+p(t)
 else
-v(i)
+p(i)
 end
 return i
 end
 end
 function mist.marker.remove(e)
-return q(e)
+return b(e)
 end
 function mist.marker.get(a)
 if mist.DBs.markList[a]then
@@ -89884,31 +89884,31 @@ if type(e)=='number'then
 return e-timer.getTime0()
 end
 end
-function mist.getDateString(i,t,o)
-local a={'January','Feburary','March','April','May','June','July','August','September','October','November','December'}
+function mist.getDateString(i,o,a)
+local t={'January','Feburary','March','April','May','June','July','August','September','October','November','December'}
 local e=0
-if o then
-e=o
+if a then
+e=a
 else
 e=mist.utils.round(timer.getAbsTime())
 end
 local e=mist.time.getDate(e)
 if i then
-if t then
-return tostring(a[e.m]..' '..e.d..' '..e.y)
+if o then
+return tostring(t[e.m]..' '..e.d..' '..e.y)
 else
-return tostring(e.d..' '..a[e.m]..' '..e.y)
+return tostring(e.d..' '..t[e.m]..' '..e.y)
 end
 else
-if t then
+if o then
 return tostring(e.m..'.'..e.d..'.'..e.y)
 else
 return tostring(e.d..'.'..e.m..'.'..e.y)
 end
 end
 end
-function mist.time.milToGame(e,i)
-local o=mist.utils.round(timer.getAbsTime())
+function mist.time.milToGame(e,o)
+local i=mist.utils.round(timer.getAbsTime())
 local t=0
 if e and type(e)=='string'and string.len(e)>=4 then
 local a=tonumber(string.sub(e,1,2))
@@ -89917,19 +89917,19 @@ t=t+(e*60)+(a*3600)
 elseif e and type(e)=='table'and(e.d or e.h or e.m or e.s)then
 t=mist.time.convertToSec(e)
 end
-local e=timer.getTime0()
-local a=0
-if e>86400 then
-a=mist.utils.round(e/86400)
-if a>0 then
-t=t*a
+local a=timer.getTime0()
+local e=0
+if a>86400 then
+e=mist.utils.round(a/86400)
+if e>0 then
+t=t*e
 end
 end
-if o>t then
+if i>t then
 t=t+86400
 end
-if i then
-t=t-e
+if o then
+t=t-a
 end
 return t
 end
@@ -90034,7 +90034,7 @@ n=o.gpData
 else
 n=o.useGroupRoute
 end
-local d=false
+local r=false
 if not o.route then
 if n then
 a=mist.getGroupRoute(n)
@@ -90043,13 +90043,13 @@ else
 e=o.route
 local t=mist.getLeadPos(i)
 e[1]=mist.ground.buildWP(t,e[1].action,e[1].speed)
-d=true
+r=true
 end
 local h=o.speed or'default'
-local r=o.pType
+local d=o.pType
 local s=o.offRoadForm or'default'
 local n=o.onRoadForm or'default'
-if d==false and#a>0 then
+if r==false and#a>0 then
 local t=mist.getLeadPos(i)
 e[#e+1]=mist.ground.buildWP(t,s,h)
 for t=1,#a do
@@ -90071,7 +90071,7 @@ i=h
 end
 e[#e+1]=mist.ground.buildWP(a[t],o,i)
 end
-if r and string.lower(r)=='doubleback'then
+if d and string.lower(d)=='doubleback'then
 local t=mist.utils.deepCopy(e)
 for a=#t,2,-1 do
 e[#e+1]=mist.ground.buildWP(t[a],t[a].action,t[a].speed)
@@ -90103,7 +90103,7 @@ t:info(e)
 mist.goRoute(i,e)
 return
 end
-function mist.ground.patrol(e,o,a,i)
+function mist.ground.patrol(e,o,i,a)
 local t={}
 if type(e)=='table'and e:getName()then
 e=e:getName()
@@ -90111,8 +90111,8 @@ end
 t.useGroupRoute=e
 t.gpData=e
 t.pType=o
-t.offRoadForm=a
-t.speed=i
+t.offRoadForm=i
+t.speed=a
 mist.ground.patrolRoute(t)
 return
 end
@@ -90262,11 +90262,11 @@ end
 e.type='Turning Point'
 return e
 end
-function mist.getRandPointInCircle(e,n,s,t,o)
-local i=mist.utils.makeVec3(e)
+function mist.getRandPointInCircle(e,s,i,t,o)
+local n=mist.utils.makeVec3(e)
 local a=2*math.pi*math.random()
-local e=n or 1000
-local n=s or 0
+local e=s or 1000
+local i=i or 0
 if t and not o then
 a=math.rad(math.random(0,t-math.random()))
 elseif t and o then
@@ -90276,23 +90276,23 @@ else
 a=math.rad(math.random(t,o)-math.random())
 end
 end
-local t=math.random()+math.random()
-if t>1 then
-t=2-t
-end
-local o
-if n and n<=e then
-o=e*math.sqrt((n^2+(e^2-n^2)*math.random())/e^2)
-else
-o=e*t
+local o=math.random()+math.random()
+if o>1 then
+o=2-o
 end
 local t
-if e>0 then
-t={x=math.cos(a)*o+i.x,y=math.sin(a)*o+i.z}
+if i and i<=e then
+t=e*math.sqrt((i^2+(e^2-i^2)*math.random())/e^2)
 else
-t={x=i.x,y=i.z}
+t=e*o
 end
-return t
+local o
+if e>0 then
+o={x=math.cos(a)*t+n.x,y=math.sin(a)*t+n.z}
+else
+o={x=n.x,y=n.z}
+end
+return o
 end
 function mist.getRandomPointInZone(e,a,o,t)
 if type(e)=='string'then
@@ -90343,9 +90343,9 @@ local e=math.sqrt(e.x^2+e.z^2)
 return t,e
 end
 function mist.groupToRandomPoint(e)
-local l=e.group
+local d=e.group
 local h=e.point
-local d=e.radius or 0
+local l=e.radius or 0
 local n=e.innerRadius
 local i=e.form or'Cone'
 local o=e.heading or math.random()*2*math.pi
@@ -90364,14 +90364,14 @@ end
 if o>=2*math.pi then
 o=o-2*math.pi
 end
-local s=mist.getRandPointInCircle(h,d,n)
+local s=mist.getRandPointInCircle(h,l,n)
 local n={}
-local t=mist.getLeadPos(l)
+local t=mist.getLeadPos(d)
 if t then
 n.x=mist.utils.round(math.sin(o-(math.pi/2))*50+s.x,3)
 n.z=mist.utils.round(math.cos(o+(math.pi/2))*50+s.y,3)
 e[#e+1]=mist.ground.buildWP(t,i,a)
-if r==true and((h.x-t.x)^2+(h.z-t.z)^2)^.5>d*1.3 then
+if r==true and((h.x-t.x)^2+(h.z-t.z)^2)^.5>l*1.3 then
 e[#e+1]=mist.ground.buildWP({x=t.x+11,z=t.z+11},'off_road',a)
 e[#e+1]=mist.ground.buildWP(t,'on_road',a)
 e[#e+1]=mist.ground.buildWP(n,'on_road',a)
@@ -90381,18 +90381,18 @@ end
 end
 e[#e+1]=mist.ground.buildWP(n,i,a)
 e[#e+1]=mist.ground.buildWP(s,i,a)
-mist.goRoute(l,e)
+mist.goRoute(d,e)
 return
 end
-function mist.groupRandomDistSelf(a,o,n,i,s,h)
+function mist.groupRandomDistSelf(a,i,o,n,s,h)
 local t=mist.getLeadPos(a)
 local e={}
-e.radius=o or math.random(300,1000)
+e.radius=i or math.random(300,1000)
 e.point={x=t.x,y=t.y,z=t.z}
-mist.groupToRandomZone(a,e,n,i,s,h)
+mist.groupToRandomZone(a,e,o,n,s,h)
 return
 end
-function mist.groupToRandomZone(o,e,s,i,a,n)
+function mist.groupToRandomZone(o,e,s,n,a,i)
 if type(o)=='string'then
 o=Group.getByName(o)
 end
@@ -90408,10 +90408,10 @@ local t={}
 t.group=o
 t.radius=e.radius
 t.form=s
-t.headingDegrees=i
+t.headingDegrees=n
 t.speed=a
 t.point=mist.utils.zoneToVec3(e)
-t.disableRoads=n
+t.disableRoads=i
 mist.groupToRandomPoint(t)
 return
 end
@@ -90460,18 +90460,18 @@ if a>=20 then
 t[#t+1]=land.getHeight({x=(e.x+(math.sin(math.rad(o))*(a/2))),y=(e.y+(math.cos(math.rad(o))*(a/2)))})
 end
 end
-local a,o=0,1000000
+local o,a=0,1000000
 for t,e in pairs(t)do
-if e>a then
-a=e
-end
-if e<o then
+if e>o then
 o=e
 end
+if e<a then
+a=e
 end
-return mist.utils.round(a-o,2)
 end
-function mist.groupToPoint(s,a,n,i,t,o)
+return mist.utils.round(o-a,2)
+end
+function mist.groupToPoint(i,a,o,n,t,s)
 if type(a)=='string'then
 a=mist.DBs.zonesByName[a]
 end
@@ -90479,11 +90479,11 @@ if t then
 t=mist.utils.kmphToMps(t)
 end
 local e={}
-e.group=s
-e.form=n
-e.headingDegrees=i
+e.group=i
+e.form=o
+e.headingDegrees=n
 e.speed=t
-e.disableRoads=o
+e.disableRoads=s
 e.point=mist.utils.zoneToVec3(a)
 mist.groupToRandomPoint(e)
 return
@@ -90496,10 +90496,10 @@ local t=e:getUnits()
 local e=t[1]
 if Unit.getLife(e)==0 or not Unit.isExist(e)then
 local e=math.huge
-for t,a in pairs(t)do
-if Unit.isExist(a)and t<e then
-e=t
-return a:getPosition().p
+for a,t in pairs(t)do
+if Unit.isExist(t)and a<e then
+e=a
+return t:getPosition().p
 end
 end
 end
@@ -90640,12 +90640,12 @@ function mist.Logger:warn(e,...)
 if self.level>=2 then
 e=a(e,unpack(arg))
 if e:len()>4000 then
-local t=t(e)
-for e=1,#t do
-if e==1 then
-env.warning(self.tag..'|'..t[e])
+local e=t(e)
+for t=1,#e do
+if t==1 then
+env.warning(self.tag..'|'..e[t])
 else
-env.warning(t[e])
+env.warning(e[t])
 end
 end
 else
@@ -125165,7 +125165,7 @@ MEDIUMFOB2={
 },
 }
 }
-local t={
+local e={
 [1]=
 {
 ["visible"]=false,
@@ -126669,7 +126669,7 @@ local t={
 ["start_time"]=0,
 },
 }
-local e={
+local t={
 [1]={
 ["visible"]=false,
 ["lateActivation"]=true,
@@ -127579,10 +127579,10 @@ local e={
 ["start_time"]=0,
 },
 }
-for t,e in pairs(t)do
+for t,e in pairs(e)do
 GROUP:NewTemplate(e,coalition.side.RED,Group.Category.GROUND,country.id.RUSSIA)
 end
-for t,e in pairs(e)do
+for t,e in pairs(t)do
 GROUP:NewTemplate(e,coalition.side.BLUE,Group.Category.GROUND,country.id.USA)
 end
 local a={
@@ -127721,10 +127721,10 @@ end
 function ZeusMod:Allow()
 self.isAllow=true
 end
-function ZeusMod:AddZone(t,a,e)
-self.zones[a]=ZONE:FindByName(t)
+function ZeusMod:AddZone(a,t,e)
+self.zones[t]=ZONE:FindByName(a)
 if self.zonesMenu[e]==nil then self.zonesMenu[e]={}end
-self.zonesMenu[e][#self.zonesMenu[e]+1]={zoneName=t,menu=e,codeName=a}
+self.zonesMenu[e][#self.zonesMenu[e]+1]={zoneName=a,menu=e,codeName=t}
 end
 function ZeusMod:UsePassword(e)
 self.needPassword=true
@@ -127793,16 +127793,16 @@ end
 end
 function ZeusMod:DefineMenu()
 if(self.zonesMenu~={})then
-local t={}
-local a=missionCommands.addSubMenu("Spawn in zones",nil)
+local a={}
+local t=missionCommands.addSubMenu("Spawn in zones",nil)
 for e,o in pairs(self.zonesMenu)do
-t[e]=missionCommands.addSubMenu(e.."...",a)
-for o,a in ipairs(o)do
+a[e]=missionCommands.addSubMenu(e.."...",t)
+for o,t in ipairs(o)do
 missionCommands.addCommand(
-"Zone "..a.zoneName,
-t[e],
+"Zone "..t.zoneName,
+a[e],
 self.defineZoneFromMenu,
-self,a.codeName
+self,t.codeName
 )
 end
 end
@@ -127963,14 +127963,14 @@ self:DefineCoalition(e[3])
 self:SpawnEditorUnit(e[2],t)
 trigger.action.outText("Groupe "..tostring(e[2]).." spawn",10)
 end
-function ZeusMod:Explode(t,e)
-local a=e[2]or 5
+function ZeusMod:Explode(a,e)
+local t=e[2]or 5
 local e=e[3]or 1000000
 timer.scheduleFunction(
-function(a)
-trigger.action.explosion(t,e)
+function(t)
+trigger.action.explosion(a,e)
 end,
-nil,timer.getTime()+a
+nil,timer.getTime()+t
 )
 trigger.action.outText("Explosion",10)
 end
@@ -127980,13 +127980,13 @@ if(e~=nil and e~="")then
 if e=="1"then self.coalition=coalition.side.RED else self.coalition=coalition.side.BLUE end
 end
 end
-function ZeusMod:AddConvoy(a,e)
-local t=Convoy:New(self.templates)
+function ZeusMod:AddConvoy(t,e)
+local a=Convoy:New(self.templates)
 self:DefineCoalition(e[4])
-t:SpawnGroup({
+a:SpawnGroup({
 type=e[2],
 coalition=self.coalition,
-pos=a,
+pos=t,
 name=e[3],
 destination=self.destination
 })
@@ -128030,7 +128030,7 @@ end
 ,self)
 trigger.action.outText("Reconnaissance terminée",20)
 end
-function ZeusMod:Reco(i,o)
+function ZeusMod:Reco(o,a)
 if(self.turnOffReco)then return end
 local e=true
 local t=0
@@ -128043,7 +128043,7 @@ return
 end
 end
 if(not e)then return end
-self:ExecReco(i,o)
+self:ExecReco(o,a)
 end
 function ZeusMod:RandomPosInZone(e)
 if(self.zones[e]~=nil)then
@@ -128195,9 +128195,9 @@ return e
 end
 function cfxGroups.getPlayerGroupNames()
 local e={}
-for a,t in pairs(cfxGroups.groups)do
-if t.hasPlayer then
-table.insert(e,a)
+for t,a in pairs(cfxGroups.groups)do
+if a.hasPlayer then
+table.insert(e,t)
 end
 end
 return e
@@ -128261,10 +128261,10 @@ if not e then e="<NIL>"end
 trigger.action.outText("+++SSB: Binding Group "..o.." to "..e.." failed.",30)
 end
 function cfxSSBClient.dist(t,e)
-local a=t.x-e.x
-local o=t.y-e.y
+local o=t.x-e.x
+local a=t.y-e.y
 local e=t.z-e.z
-return(a*a+o*o+e*e)^.5
+return(o*o+a*a+e*e)^.5
 end
 function cfxSSBClient.containsString(t,e,a)
 if(not a)then
@@ -128284,16 +128284,16 @@ end
 function cfxSSBClient.getClosestAirbaseTo(i)
 local e=math.huge
 local t=world.getAirbases()
-local o=nil
-for t,a in pairs(t)do
-local t=Airbase.getPoint(a)
-newDelta=cfxSSBClient.dist(i,{x=t.x,y=0,z=t.z})
+local a=nil
+for o,t in pairs(t)do
+local o=Airbase.getPoint(t)
+newDelta=cfxSSBClient.dist(i,{x=o.x,y=0,z=o.z})
 if newDelta<e then
 e=newDelta
-o=a
+a=t
 end
 end
-return o,e
+return a,e
 end
 function cfxSSBClient.setSlotAccessByAirfieldOwner()
 local e=cfxSSBClient.playerGroups
@@ -128349,14 +128349,14 @@ cfxSSBClient.setSlotAccessByAirfieldOwner()
 end
 function cfxSSBClient.processPlayerData()
 cfxSSBClient.playerGroups=cfxGroups.getPlayerGroup()
-local e=cfxSSBClient.playerGroups
-local t={}
-for a,e in pairs(e)do
-if e.airfield~=nil or cfxSSBClient.keepInAirGroups then
-table.insert(t,e)
+local t=cfxSSBClient.playerGroups
+local e={}
+for a,t in pairs(t)do
+if t.airfield~=nil or cfxSSBClient.keepInAirGroups then
+table.insert(e,t)
 end
 end
-cfxSSBClient.playerGroups=t
+cfxSSBClient.playerGroups=e
 end
 function cfxSSBClient.processGroupData()
 local e=cfxGroups.getPlayerGroup()
@@ -131932,15 +131932,15 @@ e.tracked_weapons={}
 return e
 end
 function SplashDamageClass:getDistance(e,t)
-local o=e.x
-local a=e.y
-local a=e.z
-local e=t.x
+local a=e.x
+local o=e.y
+local e=e.z
+local o=t.x
 local i=t.y
-local t=t.z
-local e=math.abs(o-e)
-local t=math.abs(a-t)
-local e=math.sqrt(e*e+t*t)
+local i=t.z
+local t=math.abs(a-o)
+local e=math.abs(e-i)
+local e=math.sqrt(t*t+e*e)
 return e
 end
 function SplashDamageClass:vec3Mag(e)
@@ -131948,8 +131948,8 @@ local e=e.x*e.x+e.y*e.y+e.z*e.z
 e=math.sqrt(e)
 return e
 end
-function SplashDamageClass:tableHasKey(t,e)
-return t[e]~=nil
+function SplashDamageClass:tableHasKey(e,t)
+return e[t]~=nil
 end
 function SplashDamageClass:debugMsg(e)
 if self.splash_damage_options.debug==true then
@@ -132110,8 +132110,8 @@ else
 return 0
 end
 end
-function SplashDamageClass:ChangeOption(t,e)
-self.splash_damage_options[t]=e
+function SplashDamageClass:ChangeOption(e,t)
+self.splash_damage_options[e]=t
 end
 function SplashDamageClass:SetWeaponConfig(e,t)
 self.explTable[e]=t
@@ -132149,19 +132149,19 @@ end
 end
 end
 end
-function SplashDamageClass:blastWave(i,e,a,t)
+function SplashDamageClass:blastWave(o,e,a,t)
 env.info("blast !",false)
-local o={}
+local i={}
 local a={
 id=world.VolumeType.SPHERE,
 params={
-point=i,
+point=o,
 radius=e
 }
 }
 local e=function(e,a)
 if e:getDesc().category==Unit.Category.GROUND_UNIT and Object.getCategory(e)==Object.Category.UNIT then
-o[#o+1]=e
+i[#i+1]=e
 end
 if e:getDesc().category==Unit.Category.GROUND_UNIT then
 if self.splash_damage_options.blast_stun==true then
@@ -132169,24 +132169,24 @@ end
 end
 if self.splash_damage_options.wave_explosions==true then
 local e=e
-local h=e:getPoint()
-local o=self:getDistance(i,h)
-local d=o/500
+local n=e:getPoint()
+local o=self:getDistance(o,n)
+local r=o/500
 if e:isExist()then
 if self:tableHasKey(e:getDesc(),"box")then
 local a=(e:getDesc().box.max.x+math.abs(e:getDesc().box.min.x))
-local r=(e:getDesc().box.max.y+math.abs(e:getDesc().box.min.y))
+local d=(e:getDesc().box.max.y+math.abs(e:getDesc().box.min.y))
 local i=(e:getDesc().box.max.z+math.abs(e:getDesc().box.min.z))
-local n=a
-local s=i
+local s=a
+local h=i
 if i>a then
-n=i
-s=a
+s=i
+h=a
 end
-local a=o-s/2
+local a=o-h/2
 local i=.006*t+1
 local i=(t*i)/(4*3.14*a*a)
-local a=n*r
+local a=s*d
 local a=i*a
 if a>self.splash_damage_options.cascade_damage_threshold then
 local a=a
@@ -132201,8 +132201,8 @@ local a=e.table[2]
 local e=e.table[3]
 trigger.action.explosion(t,e)
 end,
-{context=self,table={h,o,a}},
-timer.getTime()+d
+{context=self,table={n,o,a}},
+timer.getTime()+r
 )
 end
 else
@@ -132330,10 +132330,10 @@ end
 function PWS:SaveBirthRed(e)
 self.saveBirthRed=e or true
 end
-function PWS:ShowMessage(t,e)
+function PWS:ShowMessage(e,t)
 if(self.showDebug)then
-local e=e or 30
-trigger.action.outText(t,e)
+local t=t or 30
+trigger.action.outText(e,t)
 end
 end
 function PWS:IntegratedbasicSerialize(e)
@@ -132386,9 +132386,9 @@ return true
 else
 return false end
 end
-function PWS:writemission(e,t)
-File=io.open(t,"w")
-File:write(e)
+function PWS:writemission(t,e)
+File=io.open(e,"w")
+File:write(t)
 File:close()
 end
 function PWS:GroundSpawn(s,e)
@@ -132698,10 +132698,10 @@ self:LoadDeadUnits()
 self:LoadSpawnUnits()
 self:LoadRecoMark()
 end
-function PWS:isInExcludeDeadType(a)
+function PWS:isInExcludeDeadType(t)
 local e=false
-for o,t in ipairs(self.excludeTypeFromDeadList)do
-if(not e and string.match(a,t))then
+for o,a in ipairs(self.excludeTypeFromDeadList)do
+if(not e and string.match(t,a))then
 e=true
 end
 end
@@ -132716,10 +132716,10 @@ end
 end
 return e
 end
-function PWS:isInExcludeBirthName(t)
+function PWS:isInExcludeBirthName(a)
 local e=false
-for o,a in ipairs(self.excludeFromBirthList)do
-if(not e and string.match(t,a))then
+for o,t in ipairs(self.excludeFromBirthList)do
+if(not e and string.match(a,t))then
 e=true
 end
 end
@@ -132773,13 +132773,13 @@ local e=t.initiator
 local n=e:getDesc().category
 local i=t.initiator:getCoalition()
 local a=t.initiator:getName()
-local h=t.initiator:getTypeName()
+local l=t.initiator:getTypeName()
 local e=Unit.getByName(a):getPoint()
-local l=e.z
-local u=e.x
+local r=e.z
+local d=e.x
 local e=t.initiator:getGroup():getName()
-local d=t.initiator:getGroup():getID()
-local r=t.initiator:getID()
+local h=t.initiator:getGroup():getID()
+local u=t.initiator:getID()
 local s=Unit.getByName(a):getPosition()
 if((i==1 and self.saveBirthRed==true)or(i==2 and self.saveBirthBlue==true))then
 if o==1 then
@@ -132792,12 +132792,12 @@ if(self.PWS_Spawned[e][t]==nil)then self.PWS_Spawned[e][t]={}end
 self.PWS_Spawned[e][t].unitCoalition=i
 self.PWS_Spawned[e][t].unitObjectCategory=o
 self.PWS_Spawned[e][t].UnitCategory=n
-self.PWS_Spawned[e][t].unitType=h
+self.PWS_Spawned[e][t].unitType=l
 self.PWS_Spawned[e][t].unitName=a
-self.PWS_Spawned[e][t].vec3Z=l
-self.PWS_Spawned[e][t].vec3X=u
-self.PWS_Spawned[e][t].unitID=r
-self.PWS_Spawned[e][t].groupID=d
+self.PWS_Spawned[e][t].vec3Z=r
+self.PWS_Spawned[e][t].vec3X=d
+self.PWS_Spawned[e][t].unitID=u
+self.PWS_Spawned[e][t].groupID=h
 self.PWS_Spawned[e][t].heading=math.atan2(s.x.z,s.x.x)
 self:ShowMessage("Persistent World | Event : "..self.PWS_Spawned[e][t].unitName.." added to table",5)
 end
@@ -132825,9 +132825,9 @@ end
 function PWS:GetMarkUnit()
 local e={}
 if(self.markDatas==nil)then return e end
-for t,a in pairs(self.markDatas)do
-if(t~=nil and a.id~=nil)then
-e[t]=a.id
+for a,t in pairs(self.markDatas)do
+if(a~=nil and t.id~=nil)then
+e[a]=t.id
 end
 end
 return e
@@ -133073,14 +133073,14 @@ if(AIRBASE:FindByName(e):GetCoalition()==t)then return e end
 end
 return""
 end
-function CAP:Mission(i,a,o,t)
+function CAP:Mission(i,o,a,t)
 local e=""
 if(t==true)then
 e=ZONE_GROUP:New("CAP Zone Red Carrier",GROUP:FindByName("CV 1143.5 Admiral Kuznetsov"),25000)
 else
-e=AIRBASE:FindByName(a):GetZone()
+e=AIRBASE:FindByName(o):GetZone()
 end
-local t=AIRBASE:FindByName(o):GetZone()
+local t=AIRBASE:FindByName(a):GetZone()
 local a=e:GetVec2()
 local e=t:GetVec2()
 local t=math.random(self.RedFlightLevelMin,self.RedFlightLevelMax)
@@ -133528,7 +133528,7 @@ end
 end
 Convoy={}
 do
-local t={
+local a={
 [1]={
 ["unit"]="T-55",
 ["name"]="T-55"
@@ -133630,11 +133630,11 @@ local t={
 ["name"]="Gvozdika"
 },
 }
-function Convoy:New(a)
+function Convoy:New(t)
 local e={}
 setmetatable(e,{__index=self})
 e.name=""
-e.templates=a or t
+e.templates=t or a
 e.units={}
 e.units.heavy={
 "T-90","BTR-80","BTR-80","Ural","SA-9","SA-15","Ural","Ural","ZSU23","BTR-80","T-90"
@@ -133698,22 +133698,22 @@ Group.getByName(e:GetName()):destroy()
 self.EraseName()
 end
 end
-function Convoy:CreateTemplate(e,o)
-if(e==nil or o==nil or self.units[e]==nil)then return end
+function Convoy:CreateTemplate(e,a)
+if(e==nil or a==nil or self.units[e]==nil)then return end
 local t={}
-for a,e in ipairs(self.units[e])do
+for e,a in ipairs(self.units[e])do
 t[#t+1]={
-["type"]=self:FindUnitByName(e),
+["type"]=self:FindUnitByName(a),
 ["y"]=0,
-["x"]=20*a,
-["name"]="C_"..e..tostring(a),
+["x"]=20*e,
+["name"]="C_"..a..tostring(e),
 ["skill"]="High",
 }
 end
 return{
 ["task"]={},
 ["units"]=t,
-["name"]="C_"..o,
+["name"]="C_"..a,
 ["y"]=0,
 ["x"]=0
 }
@@ -133759,14 +133759,14 @@ end
 function TacanBase:AddTacan(e)
 self.tacans[e.base]=e
 end
-function TacanBase:SpawnTacan(e,t,a)
+function TacanBase:SpawnTacan(e,a,t)
 local e="Tacan_"..e
 SPAWN:NewWithAlias("Plane Template",e):InitRandomizeTemplate({"Beacon"})
 :OnSpawnGroup(
 function(e)
-e:SetTask(self:CreateTacan(e,t))
+e:SetTask(self:CreateTacan(e,a))
 end
-):SpawnFromVec3(a)
+):SpawnFromVec3(t)
 end
 function TacanBase:onEvent(e)
 if(e.id==world.event.S_EVENT_BASE_CAPTURED)then
@@ -134185,23 +134185,23 @@ aliveFrom=timer.getTime()
 }
 return true
 end
-function CaptureAirBase:SpawnNewConvoy(t)
-local e=self.redConvoyGroup[math.random(#self.redConvoyGroup)]
-env.info("type convoi : "..tostring(e),false)
-if(e==nil)then return false end
-local a=Convoy:New()
-local o=t.start:GetVec3()
+function CaptureAirBase:SpawnNewConvoy(e)
+local t=self.redConvoyGroup[math.random(#self.redConvoyGroup)]
+env.info("type convoi : "..tostring(t),false)
+if(t==nil)then return false end
+local o=Convoy:New()
+local a=e.start:GetVec3()
 if(self.startZoneDebug~=nil and self.startZoneDebug~="")then
-o=ZONE:FindByName(self.startZoneDebug):GetVec3()
+a=ZONE:FindByName(self.startZoneDebug):GetVec3()
 end
-a:SpawnGroup({
-type=e,
+o:SpawnGroup({
+type=t,
 coalition=coalition.side.RED,
-pos=o,
-name=self.groupCapturePrefix.."_"..e.."_"..t.destination:GetName(),
-destination=t.destination:GetVec3()
+pos=a,
+name=self.groupCapturePrefix.."_"..t.."_"..e.destination:GetName(),
+destination=e.destination:GetVec3()
 })
-self.redGroundGroupDestination[t.destination:GetName()]={spawnGroup=a,aliveFrom=timer.getTime()}
+self.redGroundGroupDestination[e.destination:GetName()]={spawnGroup=o,aliveFrom=timer.getTime()}
 self.redConvoyGroupNbr=self.redConvoyGroupNbr+1
 return true
 end
@@ -134214,21 +134214,21 @@ local e=t.context:IsGroundSpawnAllowed()
 if(e)then
 env.info("allowedSpawn",false)
 local e={}
-for a,o in ipairs(t.context.redBases)do
-local i=AIRBASE:FindByName(o.start)
-local a=AIRBASE:FindByName(o.destination)
+for a,i in ipairs(t.context.redBases)do
+local a=AIRBASE:FindByName(i.start)
+local o=AIRBASE:FindByName(i.destination)
 if(
-i:GetCoalition()==coalition.side.RED and
-a:GetCoalition()==coalition.side.BLUE and
-t.context.redGroundGroupDestination[o.destination]==nil
-)then
-e[#e+1]={start=i,destination=a}
-else if(
-i:GetCoalition()==coalition.side.BLUE and
 a:GetCoalition()==coalition.side.RED and
-t.context.redGroundGroupDestination[o.start]==nil
+o:GetCoalition()==coalition.side.BLUE and
+t.context.redGroundGroupDestination[i.destination]==nil
 )then
-e[#e+1]={start=a,destination=i}
+e[#e+1]={start=a,destination=o}
+else if(
+a:GetCoalition()==coalition.side.BLUE and
+o:GetCoalition()==coalition.side.RED and
+t.context.redGroundGroupDestination[i.start]==nil
+)then
+e[#e+1]={start=o,destination=a}
 end
 end
 end
@@ -134279,20 +134279,20 @@ table.insert(self.datasBase,self.basesIndex,t)
 self.basesSpawn[e.base]=t.groupPop
 self.basesFootHold[e.base]=e.footHoldCompatibility or false
 end
-function CaptureAirBase:AddbaseAutoCapture(e,t)
+function CaptureAirBase:AddbaseAutoCapture(t,e)
 self.basesIndex=self.basesIndex+1
 local e={
-["base"]=e,
+["base"]=t,
 ["autocapture"]=true,
-["zoneName"]=t or""
+["zoneName"]=e or""
 }
 table.insert(self.datasBase,self.basesIndex,e)
 end
-function CaptureAirBase:RouteHELO(i,t,a)
+function CaptureAirBase:RouteHELO(t,n,a)
 local e={}
 local o=math.random(150,250)
-local i=i:GetCoordinate()
-local t=i:WaypointAir("RADIO",COORDINATE.WaypointType.TakeOffParking,COORDINATE.WaypointAction.FromParkingArea,o,true,t,nil,"TAKEOFF")
+local i=t:GetCoordinate()
+local t=i:WaypointAir("RADIO",COORDINATE.WaypointType.TakeOffParking,COORDINATE.WaypointAction.FromParkingArea,o,true,n,nil,"TAKEOFF")
 e[#e+1]=t
 local n=a:GetCoordinate()
 local s=a:GetVec3()
@@ -134463,8 +134463,8 @@ timer.scheduleFunction(function(e,t)
 if(e.obj.group~=nil and e.obj.toAirbase~=nil)then
 local t=e.obj.group:GetFirstUnit()
 if(e.context.groupC17Infos~=nil and e.context.groupC17Infos.time~=nil)then
-if timer.getTime()-e.context.groupC17Infos.time>600 and t:GetVelocityKMH()<1 then
-t:Destroy()
+if timer.getTime()-e.context.groupC17Infos.time>600 and(not t:IsAlive()or t:GetVelocityKMH()<1)then
+if(t:IsAlive())then t:Destroy()end
 e.context.groupC17Infos=nil
 else
 local t=e.obj.toAirbase:GetZone():GetCoordinate(0)
@@ -134481,6 +134481,7 @@ radius=500,
 newGroupName=e.context.groupPopPrefix.."_"..e.obj.unit.."_"..e.obj.airbaseName
 }
 mist.teleportToPoint(t)
+Airbase:getByName(e.obj.airbaseName):setCoalition(coalition.side.BLUE)
 trigger.action.outText("Base "..tostring(e.obj.airbaseName).." capturée !",30)
 else
 return timer.getTime()+5
@@ -134543,11 +134544,11 @@ end
 RecoUtils={
 vec={}
 }
-function RecoUtils.offsetCalc(e,a)
+function RecoUtils.offsetCalc(e,o)
 local t=(math.atan2(e:getPosition().x.z,e:getPosition().x.x)+2*math.pi)
-local o=land.getHeight({x=e:getPoint().x,y=e:getPoint().z})
-local o=e:getPoint().y-o
-local a=math.tan(a)*o
+local a=land.getHeight({x=e:getPoint().x,y=e:getPoint().z})
+local a=e:getPoint().y-a
+local a=math.tan(o)*a
 local o=e:getPoint().x+((math.cos(t)*a))
 local e=e:getPoint().z+(math.sin(t)*a)
 return{x=o,z=e}
@@ -134798,9 +134799,9 @@ end
 function ReconClass:GetParametersOffset(e)
 return self:GetParameters(e):GetOffset()
 end
-function ReconClass:AddTargetListToInstance(a,e)
-for t,e in next,e do
-self:AddInstanceTarget(a,t,e)
+function ReconClass:AddTargetListToInstance(t,e)
+for a,e in next,e do
+self:AddInstanceTarget(t,a,e)
 end
 end
 function ReconClass:FindTargets(a)
@@ -134808,17 +134809,17 @@ local t=self:GetInstance(a)
 local e=self:GetObject(a)
 local i=land.getHeight({x=e:getPoint().x,y=e:getPoint().z})
 local o=e:getPoint().y-i
-local s=self:GetParametersMinAlt(t.type)
-local l=self:GetParametersMaxAlt(t.type)
-local u=self:GetParametersMaxRoll(t.type)
-local d=self:GetParametersMaxPitch(t.type)
-local h=self:GetParametersFov(t.type)
-local r=self:GetParametersOffset(t.type)
-local n=math.abs(math.deg(RecoUtils.getRoll(e)))
+local u=self:GetParametersMinAlt(t.type)
+local d=self:GetParametersMaxAlt(t.type)
+local l=self:GetParametersMaxRoll(t.type)
+local n=self:GetParametersMaxPitch(t.type)
+local s=self:GetParametersFov(t.type)
+local h=self:GetParametersOffset(t.type)
+local r=math.abs(math.deg(RecoUtils.getRoll(e)))
 local t=math.abs(math.deg(RecoUtils.getPitch(e)))
-local n=(n<u)and(t<d)
-local t=o*math.tan(math.rad(h))
-local e=RecoUtils.offsetCalc(e,r)
+local n=(r<l)and(t<n)
+local t=o*math.tan(math.rad(s))
+local e=RecoUtils.offsetCalc(e,h)
 local i={
 id=world.VolumeType.SPHERE,
 params={
@@ -134833,7 +134834,7 @@ t[e:getName()]=e
 return true
 end
 end
-if o>s and o<l and n then
+if o>u and o<d and n then
 world.searchObjects(Object.Category.UNIT,i,e)
 return t
 end
@@ -135045,16 +135046,16 @@ self:DeleteInstance(e.initiator:getName())
 end
 end
 if(world.event.S_EVENT_DEAD==e.id or world.event.S_EVENT_UNIT_LOST==e.id)and e.initiator then
-local t=e.initiator:getName()
-if self:GetDetectedTargets(t)==nil then
-local e=self:GetBlueMarksFromUser(t)
-if(e==nil)then
-e=self:GetRedMarksFromUser(t)
+local e=e.initiator:getName()
+if self:GetDetectedTargets(e)==nil then
+local t=self:GetBlueMarksFromUser(e)
+if(t==nil)then
+t=self:GetRedMarksFromUser(e)
 end
-if e~=nil then
-trigger.action.removeMark(e)
+if t~=nil then
+trigger.action.removeMark(t)
 end
-self:DeleteDetectedTargets(t)
+self:DeleteDetectedTargets(e)
 end
 end
 if world.event.S_EVENT_TAKEOFF==e.id and e.initiator then
@@ -135087,16 +135088,16 @@ if(self:RecoTypeAllow(e.initiator:getTypeName()))
 then
 local t=e.initiator:getName()
 if(not self:IsInstanceExist(t))then return end
-local n=coalition.getAirbases(self:GetInstanceCoalition(t))
-local i=n[1]
+local i=coalition.getAirbases(self:GetInstanceCoalition(t))
+local n=i[1]
 local o
-local a=RecoUtils.distance(e.initiator:getPoint(),i:getPoint())
+local a=RecoUtils.distance(e.initiator:getPoint(),n:getPoint())
 local s
-for n,t in next,n do
+for i,t in next,i do
 o=RecoUtils.distance(e.initiator:getPoint(),t:getPoint())
 if o<=a then
 a=o
-i=t
+n=t
 end
 end
 if a<4000 then
@@ -135114,9 +135115,9 @@ end
 end
 DBUtils={}
 function DBUtils.indexOf(e,t)
-for e,a in ipairs(e)do
-if a==t then
-return e
+for a,e in ipairs(e)do
+if e==t then
+return a
 end
 end
 return nil
@@ -135165,10 +135166,10 @@ local e=e
 setmetatable(e,{__index=self})
 return e
 end
-function IABombing:RouteHELO(e,o,t)
-local a=AIRBASE:FindByName(e)
-local n=AIRBASE:FindByName(o)
-local t=GROUP:FindByName(t)
+function IABombing:RouteHELO(a,t,e)
+local a=AIRBASE:FindByName(a)
+local n=AIRBASE:FindByName(t)
+local t=GROUP:FindByName(e)
 local e={}
 local o=200
 local t=t:GetCoordinate()
@@ -135214,10 +135215,10 @@ local e={
 world.searchObjects(Object.Category.UNIT,e,
 function(e,o)
 if e~=nil and e:getLife()>0 and e:isActive()and e:getCoalition()==coalition.side.RED then
-local a=e:getPoint()
-local t=COORDINATE:NewFromVec3(a)
-local t=e:getTypeName().."\n\n"..t:ToStringLLDDM().."\n"..t:ToStringMGRS()
-o:AddMark({text=t,position=a,name=e:getName()})
+local t=e:getPoint()
+local a=COORDINATE:NewFromVec3(t)
+local a=e:getTypeName().."\n\n"..a:ToStringLLDDM().."\n"..a:ToStringMGRS()
+o:AddMark({text=a,position=t,name=e:getName()})
 end
 end
 ,self)
@@ -135321,20 +135322,20 @@ elseif a=="tankers"then
 e="Informations Tankers : "
 for a,t in ipairs(self.tankers)do
 local o=t.callsign.name..tostring(t.callsign.groupeNumber).."1"
-local i=t.plane
-local a=t.frequency
+local a=t.plane
+local i=t.frequency
 local t=t.tacan.frequency..t.tacan.band.." ("..t.tacan.code..")"
-e=e..'\n '..o..' : '..i.." ["..a..'MHz - '..t..']'
+e=e..'\n '..o..' : '..a.." ["..i..'MHz - '..t..']'
 end
 elseif a=="pa"then
 e="Informations Groupe Aéronaval : "
 for a,t in ipairs(self.pa.ships)do
 local a=t.name
-local o=t.frequency
-local n=t.tacan..' ('..t.tacanInfos..')'
-local i=t.link4
+local i=t.frequency
+local o=t.tacan..' ('..t.tacanInfos..')'
+local n=t.link4
 local t=t.ICLS
-e=e..'\n '..a.." ["..o..'MHz - '..n..' - Link4 : '..i..' - ICLS : '..t..']'
+e=e..'\n '..a.." ["..i..'MHz - '..o..' - Link4 : '..n..' - ICLS : '..t..']'
 end
 end
 if e~=nil then
@@ -135441,19 +135442,19 @@ end
 function IABlue:MovetankerTo(e)
 local a=ZONE:FindByName(e.startTo):GetVec2()
 local t=ZONE:FindByName(e.endTo):GetVec2()
-local i=e.groupPosition.x
-local o=e.groupPosition.y
-local n=a.x
+local r=e.groupPosition.x
+local i=e.groupPosition.y
+local o=a.x
 local a=a.y
-local s=t.x
-local h=t.y
+local n=t.x
+local s=t.y
 local t
 if(e.tacan.band=="X")then
 t=4
 else
 t=5
 end
-local r=DBUtils.TACANToFrequency(e.tacan.frequency,e.tacan.band)
+local h=DBUtils.TACANToFrequency(e.tacan.frequency,e.tacan.band)
 local e={
 ["id"]="Mission",
 ["params"]={
@@ -135505,7 +135506,7 @@ local e={
 ["channel"]=e.tacan.frequency,
 ["system"]=t,
 ["bearing"]=true,
-["frequency"]=r,
+["frequency"]=h,
 },
 },
 },
@@ -135572,8 +135573,8 @@ local e={
 ["type"]="Turning Point",
 ["ETA"]=0,
 ["ETA_locked"]=true,
-["y"]=o,
-["x"]=i,
+["y"]=i,
+["x"]=r,
 ["name"]="KC135-MPRS",
 ["formation_template"]="",
 ["speed_locked"]=true,
@@ -135598,7 +135599,7 @@ local e={
 ["ETA"]=114.93331115751,
 ["ETA_locked"]=false,
 ["y"]=a,
-["x"]=n,
+["x"]=o,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -135640,8 +135641,8 @@ local e={
 ["type"]="Turning Point",
 ["ETA"]=1332.7644601603,
 ["ETA_locked"]=false,
-["y"]=h,
-["x"]=s,
+["y"]=s,
+["x"]=n,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -135745,11 +135746,11 @@ function IABlue:TankerMission(e)
 local o=ZONE:FindByName(e.spawnTo):GetVec2()
 local t=ZONE:FindByName(e.startTo):GetVec2()
 local a=ZONE:FindByName(e.endTo):GetVec2()
-local r=o.x-10000
+local i=o.x-10000
 local n=o.y
-local i=t.x
-local o=t.y
-local s=a.x
+local o=t.x
+local s=t.y
+local r=a.x
 local h=a.y
 local t
 if(e.tacan.band=="X")then
@@ -135877,7 +135878,7 @@ local e={
 ["ETA"]=0,
 ["ETA_locked"]=true,
 ["y"]=n,
-["x"]=r,
+["x"]=i,
 ["name"]="KC135-MPRS",
 ["formation_template"]="",
 ["speed_locked"]=true,
@@ -135901,8 +135902,8 @@ local e={
 ["type"]="Turning Point",
 ["ETA"]=114.93331115751,
 ["ETA_locked"]=false,
-["y"]=o,
-["x"]=i,
+["y"]=s,
+["x"]=o,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -135945,7 +135946,7 @@ local e={
 ["ETA"]=1332.7644601603,
 ["ETA_locked"]=false,
 ["y"]=h,
-["x"]=s,
+["x"]=r,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -135969,9 +135970,9 @@ groupPosition=t:GetVec2()
 )
 end
 end
-function IABlue:GetProgression(t)
-if(t.progression==nil)then return t.initial end
-for t,e in ipairs(t.progression)do
+function IABlue:GetProgression(a)
+if(a.progression==nil)then return a.initial end
+for t,e in ipairs(a.progression)do
 local t=nil
 for a,e in ipairs(e.bases)do
 if(t==nil or t==true)then
@@ -135991,13 +135992,12 @@ endPosition=e.endPosition
 end
 end
 end
-return t.initial
+return a.initial
 end
 function IABlue:DoAwacs()
 timer.scheduleFunction(
 function(t,e)
 for a,e in pairs(t.context.awacs)do
-env.info("debug : "..tostring(e.callsign))
 if(e.name~=nil and GROUP:FindByName(e.name)~=nil and GROUP:FindByName(e.name):IsAlive())then
 local o=t.context:GetProgression({initial=e.startTo,progression=e.progression})
 if(o==e.actualPosition)then
@@ -136185,9 +136185,9 @@ function IABlue:SetMissionAwacs(t)
 local e=ZONE:FindByName(t.destination):GetVec2()
 local a=e.x-10000
 local o=e.y
-local s=a+1000
-local n=o
-local i=e.x
+local n=a+1000
+local i=o
+local s=e.x
 local e=e.y
 local e={
 ["id"]="Mission",
@@ -136305,8 +136305,8 @@ local e={
 ["type"]="Turning Point",
 ["ETA"]=53.765858988616,
 ["ETA_locked"]=false,
-["y"]=n,
-["x"]=s,
+["y"]=i,
+["x"]=n,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -136343,7 +136343,7 @@ local e={
 ["ETA"]=267.54434679855,
 ["ETA_locked"]=false,
 ["y"]=e,
-["x"]=i,
+["x"]=s,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -136399,30 +136399,30 @@ end
 trigger.action.outText("Scan terminé",5)
 end
 function IABlue:RemoveAllMark()
-for t,e in pairs(self.markObj)do
-self.markObj[t]=nil
-trigger.action.removeMark(e)
+for e,t in pairs(self.markObj)do
+self.markObj[e]=nil
+trigger.action.removeMark(t)
 end
 end
-function IABlue:ScanReaper(t)
-local e=t
-e.y=450+t.y
+function IABlue:ScanReaper(e)
+local t=e
+t.y=450+e.y
 local e=SPAWN:NewWithAlias("Plane Template","Reco"):InitRandomizeTemplate({"MQ9"})
 :InitCountry(country.id.USA)
 :InitCategory(Group.Category.AIRPLANE)
 :InitCoalition(coalition.side.BLUE)
 :InitCallSign(CALLSIGN.Aircraft.Springfield,"Springfield",1,1)
 :OnSpawnGroup(
-function(t)
+function(e)
 timer.scheduleFunction(
 function(e,t)
 GROUP:FindByName(e.groupName):Destroy()
 end,
-{groupName=t.GroupName},
+{groupName=e.GroupName},
 timer.getTime()+5
 )
 end
-):SpawnFromVec3(e)
+):SpawnFromVec3(t)
 end
 function IABlue:AddFuelbyPos(e)
 local t=nil
@@ -136647,41 +136647,41 @@ end
 end
 ):SpawnFromVec3(t)
 end
-function Reaper:GetDistance(o,a,e,t)
-local e=o-e
-local t=a-t
+function Reaper:GetDistance(e,t,a,o)
+local e=e-a
+local t=t-o
 return math.sqrt(e*e+t*t)
 end
 function Reaper:FindTarget(t,e)
 local e=1
 local e=1
 local e=nil
-local r=nil
-local h=nil
-local s=4000
+local n=nil
+local s=nil
+local r=4000
 local o=coalition.getGroups(1,Group.Category.GROUND)
 local a=t:GetVec3()
 local t=t:GetPosition()
 local t=nil
 local i=nil
 local i=nil
-for n=1,#o do
-if o[n]~=nil then
-r=o[n]:getName()
-e=GROUP:FindByName(r):GetUnits()
+for h=1,#o do
+if o[h]~=nil then
+n=o[h]:getName()
+e=GROUP:FindByName(n):GetUnits()
 if#e>0 then
 for o=1,#e do
-local n=false
-local r=true
-if e[o]:IsActive()==true and n==false and r==true then
+local h=false
+local n=true
+if e[o]:IsActive()==true and h==false and n==true then
 t=e[o]:GetVec3()
 i=self:GetDistance(t.x,t.z,a.x,a.z)
-if i<s then
+if i<r then
 local n={x=t.x,y=t.y+2.,z=t.z}
 local t={x=a.x,y=a.y+2.,z=a.z}
 if land.isVisible(n,t)then
-s=i
-h=e[o]
+r=i
+s=e[o]
 end
 end
 end
@@ -136689,7 +136689,7 @@ end
 end
 end
 end
-return h
+return s
 end
 function Reaper:UpdateTarget(e)
 local e=e:GetVec3()
@@ -136773,9 +136773,9 @@ function Reaper:Mission(t)
 local e=AIRBASE:FindByName(t.airbaseName):GetZone():GetVec3()
 local a=e.x-10000
 local o=e.z
-local n=a+1000
-local i=o
-local s=e.x
+local s=a+1000
+local n=o
+local i=e.x
 local h=e.z
 local e=e.y+1500
 local e={
@@ -136900,8 +136900,8 @@ local e={
 ["type"]="Turning Point",
 ["ETA"]=53.765858988616,
 ["ETA_locked"]=false,
-["y"]=i,
-["x"]=n,
+["y"]=n,
+["x"]=s,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -136950,7 +136950,7 @@ local e={
 ["ETA"]=269.74317967324,
 ["ETA_locked"]=false,
 ["y"]=h,
-["x"]=s,
+["x"]=i,
 ["formation_template"]="",
 ["speed_locked"]=true,
 },
@@ -137122,21 +137122,21 @@ self.BlueUnitObj
 )
 end
 function Menu:DoReaper()
-local a=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"MQ-9 Reaper",self.supportMenu)
+local t=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"MQ-9 Reaper",self.supportMenu)
 local n=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"MQ-9 Reaper",self.abortMenu)
-local t={}
+local i={}
 local o={}
-for e,i in pairs(self.MQ9Obj.jtacBase)do
-t[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,a)
-for i,a in pairs(i)do
-o[i]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Base "..a,t[e])
-for e,t in pairs(self.MQ9Obj.jtac)do
+for e,a in pairs(self.MQ9Obj.jtacBase)do
+i[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,t)
+for a,t in pairs(a)do
+o[a]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Base "..t,i[e])
+for e,i in pairs(self.MQ9Obj.jtac)do
 missionCommands.addCommandForCoalition(
 coalition.side.BLUE,
-t.name,
-o[i],
+i.name,
+o[a],
 self.MQ9Obj.SpawnTo,
-self.MQ9Obj,a,e
+self.MQ9Obj,t,e
 )
 end
 end
@@ -137152,32 +137152,32 @@ self.MQ9Obj,t
 end
 end
 function Menu:DoAutoReaper()
-local a=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Autolase MQ-9 Reaper",self.supportMenu)
+local i=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Autolase MQ-9 Reaper",self.supportMenu)
 local n=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Autolase MQ-9 Reaper",self.abortMenu)
-local i={}
 local t={}
+local a={}
 for e,o in pairs(self.AutoMQ9Obj.jtacBase)do
-i[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,a)
-for a,o in pairs(o)do
-t[a]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Base "..o,i[e])
-for i,e in pairs(self.AutoMQ9Obj.jtac)do
+t[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,i)
+for i,o in pairs(o)do
+a[i]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Base "..o,t[e])
+for t,e in pairs(self.AutoMQ9Obj.jtac)do
 missionCommands.addCommandForCoalition(
 coalition.side.BLUE,
 e.name,
-t[a],
+a[i],
 self.AutoMQ9Obj.SpawnTo,
-self.AutoMQ9Obj,o,i
+self.AutoMQ9Obj,o,t
 )
 end
 end
 end
-for t,e in pairs(self.AutoMQ9Obj.jtac)do
+for e,t in pairs(self.AutoMQ9Obj.jtac)do
 missionCommands.addCommandForCoalition(
 coalition.side.BLUE,
-"Détuire "..e.name,
+"Détuire "..t.name,
 n,
 self.AutoMQ9Obj.Abord,
-self.AutoMQ9Obj,t
+self.AutoMQ9Obj,e
 )
 end
 end
@@ -137208,11 +137208,11 @@ e,
 self.DoMissileObj,
 self
 )
-local o=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Sur unités (base)",e)
+local t=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Sur unités (base)",e)
 local a={}
-for e,t in pairs(self.BlueUnitObj.base)do
-a[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,o)
-for o,t in pairs(t)do
+for e,o in pairs(self.BlueUnitObj.base)do
+a[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,t)
+for o,t in pairs(o)do
 missionCommands.addCommandForCoalition(
 coalition.side.BLUE,
 "Base de "..t,
@@ -137224,16 +137224,16 @@ end
 end
 end
 function Menu:DoBombing()
-local t=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Bombardement Anti-piste",self.supportMenu)
-local n=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Bombardement d'unités",self.supportMenu)
+local n=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Bombardement Anti-piste",self.supportMenu)
+local t=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Bombardement d'unités",self.supportMenu)
 local i=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,"Bombardement B-1B",self.abortMenu)
 local o={}
 local a={}
 local e={}
 local e={}
 for e,i in pairs(self.BlueUnitObj.base)do
-o[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,t)
-a[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,n)
+o[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,n)
+a[e]=missionCommands.addSubMenuForCoalition(coalition.side.BLUE,e,t)
 for i,t in pairs(i)do
 missionCommands.addCommandForCoalition(
 coalition.side.BLUE,
@@ -137404,25 +137404,25 @@ end
 end
 end
 end
-function CTLDSpawn:SpawnStatic(e,t)
+function CTLDSpawn:SpawnStatic(e,a)
 env.info("spawn static for ctld at "..tostring(e),false)
-local a=self.statics[e][t]
-local o=ZONE:New(a.zoneName)
+local t=self.statics[e][a]
+local o=ZONE:New(t.zoneName)
 local i=POINT_VEC2:NewFromVec2(o:GetVec2())
 local o=country.id.RUSSIA
-if(t==2)then
+if(a==2)then
 o=country.id.USA
 end
-local a=SPAWNSTATIC:InitType("CV_59_Large_Forklift")
+local t=SPAWNSTATIC:InitType("CV_59_Large_Forklift")
 :InitCountry(o)
-:SpawnFromPointVec2(i,0,a.staticName)
+:SpawnFromPointVec2(i,0,t.staticName)
 if self.staticAlive[e]==nil then self.staticAlive[e]={}end
-self.staticAlive[e][t]=a
-local a=1
-if t==1 then a=2 end
-if(self.staticAlive[e]~=nil and self.staticAlive[e][a]~=nil)then
-self.staticAlive[e][a]:Destroy()
-self.staticAlive[e][a]=nil
+self.staticAlive[e][a]=t
+local t=1
+if a==1 then t=2 end
+if(self.staticAlive[e]~=nil and self.staticAlive[e][t]~=nil)then
+self.staticAlive[e][t]:Destroy()
+self.staticAlive[e][t]=nil
 end
 end
 function CTLDSpawn:onEvent(e)
@@ -137438,4 +137438,4 @@ self:SpawnStatic(e,t)
 end
 end
 end
-env.info('DCSSimplifyMission load (' .. tostring('1.0.14') .. ')', false)
+env.info('DCSSimplifyMission load (' .. tostring('1.0.16') .. ')', false)
