@@ -11,7 +11,6 @@ splash:Init()
 
 local Zeus = ZeusMod:New("MOOSERED")
 Zeus:Allow()
-Zeus:UsePassword('password')
 Zeus:ExcludePersistance(Persistance)
 Zeus:Init()
 
@@ -27,51 +26,11 @@ Tacan:AddTacan({
 })
 
 
-Tacan:AddTacan({
-    code = "MEL",
-    frequency = 43,
-    band = "X",
-    base = "Melez"
-})
-
-Tacan:AddTacan({
-    code = "CIA",
-    frequency = 44,
-    band = "X",
-    base = "Cairo International Airport"
-})
-
-
-Tacan:AddTacan({
-    code = "CWT",
-    frequency = 45,
-    band = "X",
-    base = "Cairo West"
-})
-
-Tacan:AddTacan({
-    code = "WAJ",
-    frequency = 97,
-    band = "X",
-    base = "Wadi al Jandali"
-})
-
-Tacan:AddTacan({
-    code = "HZM",
-    frequency = 95,
-    band = "X",
-    base = "Hatzerim"
-})
-
 Tacan:Init()
 
 local artillery = GroundArtillery:New()
--- artillery:AddGroundShootIf("Scud1", "Ramon Airbase") --add Scud1 group in editor 
--- artillery:AddGroundShootIf("Scud2", "Ovda") --add Scud1 group in editor 
--- artillery:AddGroundShootIf("Scud3", "Melez") --add Scud3 group in editor 
--- artillery:AddGroundShootIf("Ramon", "Kedem") --add Ramon group in editor 
+-- artillery:AddGroundShootIf("Scud1", "Ramon Airbase") -- ajouter un groupe Scud1 dans l'éditeur avant d'activer cette ligne
 artillery:Init()
-
 
 
 
@@ -79,63 +38,30 @@ local MyCapture = CaptureAirBase:New(Persistance)
 MyCapture:AddGroundControl(artillery)
 
 MyCapture:AddbaseToCapture({base = "Al Mansurah", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
-MyCapture:AddbaseToCapture({base = "Nevatim", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
-MyCapture:AddbaseToCapture({base = "Hatzerim", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
 MyCapture:AddbaseToCapture({base = "Ovda", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Patriot"})
-MyCapture:AddbaseToCapture({base = "Melez", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Patriot"})
-MyCapture:AddbaseToCapture({base = "Cairo International Airport", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
-MyCapture:AddbaseToCapture({base = "Ramon Airbase", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
-MyCapture:AddbaseToCapture({base = "Fayed", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})
-
 
 MyCapture:AddbaseAutoCapture("Abu Rudeis")
 MyCapture:AddbaseAutoCapture("St Catherine")
-MyCapture:AddbaseAutoCapture("Wadi al Jandali")
-MyCapture:AddbaseAutoCapture("Cairo West")
-MyCapture:AddbaseAutoCapture("El Arish")
-MyCapture:AddbaseAutoCapture("El Gora")
-MyCapture:AddbaseAutoCapture("Kibrit Air Base")
-MyCapture:AddbaseAutoCapture("Bir Hasanah")
-MyCapture:AddbaseAutoCapture("Kedem")
-MyCapture:AddbaseAutoCapture("AzZaqaziq")
-MyCapture:AddbaseAutoCapture("Al Ismailiyah")
-
 
 MyCapture:RedGroundCaptureGroup({"unArmored","armored","scout","zu","zu","sa9", "sa9","heavy", "heavy"}) -- N group choose randomly. choose in Convoy Class
+MyCapture:RedSpawnCapturegroup({"redGround"}) -- editor grop name
 
-MyCapture:RedSpawnCapturegroup({"redGround"}) -- editor group name
 
-
-MyCapture:RedMaxGroundSpawn({
+MyCapture:RedMaxGroundSpawn( {
     { min = 3, max = 6, },
     { min = 7, max = 10},
     { min = 11}
-})
-
-
-MyCapture:RedGroundSpawnTime(1200) --time in s before respawn for same group
-
-
+}
+)
 
 MyCapture:AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})
 MyCapture:AddRedGroundCaptureBase({start = "Bir Hasanah", destination = "Melez"})
-MyCapture:AddRedGroundCaptureBase({start = "Fayed", destination = "Kibrit Air Base"})
-MyCapture:AddRedGroundCaptureBase({start = "Fayed", destination = "Al Ismailiyah"})
-MyCapture:AddRedGroundCaptureBase({start = "Cairo International Airport", destination = "Wadi al Jandali"})
 
 MyCapture:RedAirCaptureHQ({"Cairo International Airport"})
 MyCapture:AddRedAirCaptureBase("Melez")
 MyCapture:AddRedAirCaptureBase("Nevatim")
-MyCapture:AddRedAirCaptureBase("Ovda")
-MyCapture:AddRedAirCaptureBase("Fayed")
-MyCapture:AddRedAirCaptureBase("Al Mansurah")
-MyCapture:AddRedAirCaptureBase("El Arish")
-
-
 
 MyCapture:Init()
-
-
 
 
 local baseAndZoneMap = {
@@ -158,7 +84,6 @@ local MQ9 = Reaper:New()
 MQ9:SetZones(baseAndZoneMap)
 MQ9:SetStartFrequency(272)
 MQ9:Init()
-
 
 local MQ9Auto = Reaper:New()
 MQ9Auto:SetZones(baseAndZoneMap)
@@ -211,46 +136,6 @@ local tanker2 = TankerIA:New({
     }
 })
 
-
-
-local tanker3 = TankerIA:New({
-    plane = "KC135", 
-    alt = 20000, 
-    knot = 450, 
-    frequency = 231, 
-    tacan = {frequency = 31, band = "X", code = "KC2"}, 
-    callsign = {name = "Shell", groupeNumber = 2}, 
-    takeOffFrom = "Ben-Gurion",
-    startTo = {
-        startPosition = "KC135-sud-1", 
-        endPosition = "KC135-sud-2", 
-        bases = {
-            "St Catherine",
-            "Abu Rudeis"
-        }
-    },
- 
-})
-
-local tanker4 = TankerIA:New({
-    plane = "KC135MPRS", 
-    alt = 18000, 
-    knot = 420, 
-    frequency = 234, 
-    tacan = {frequency = 34, band = "X", code = "KM2"}, 
-    callsign = {name = "Texaco", groupeNumber = 2}, 
-    takeOffFrom = "Ben-Gurion",
-    startTo = {
-        startPosition = "KC135-sud-1", 
-        endPosition = "KC135-sud-2", 
-        bases = {
-            "St Catherine",
-            "Abu Rudeis"
-        }
-    },
-
-})
-
 -- just for message informations
 local gan = IAGAN:New({
     groupeName = "Groupe aeronaval", 
@@ -260,9 +145,6 @@ local gan = IAGAN:New({
         {name = "Washington", frequency = "128.5MHz" , tacan = "62X", tacanInfos = "WHG", link4 = "326MHz", ICLS = "15"}
     }
 })
-
-
-
 
 
 local tomahawk = IATomahawk:New("Groupe aeronaval")
@@ -277,15 +159,22 @@ local bombing = IABombing:New({
 
 
 local IA = IABlue:New(Persistance)
-IA:SetTankers({tanker1, tanker2, tanker3, tanker4 })
+IA:SetTankers({tanker1, tanker2 })
 IA:SetAwacs({awacs1})
 IA:SetZones(baseAndZoneMap)
 IA:AllowedCruise(tomahawk) 
 IA:AllowedSatReco()
-IA:ShowTrainingZone("Training target-4")
 IA:AllowedBombing(bombing)
 IA:SetPA(gan)
+-- IA:ShowTrainingZone("Training target-4") -- ajouter une zone Training target-4 dans l'éditeur
 IA:Init()
+
+local menu = Menu:New()
+menu:AddMQ9(MQ9)
+menu:AddAutoMQ9(MQ9Auto)
+menu:AddIA(IA)
+menu:AddFrequences()
+menu:Init()
 
 
 SyAAFAirForceCAP = {
@@ -313,7 +202,6 @@ SyAAFAirForcePACAP = {
 
 local redCap = CAP:New()
 
-
 redCap:AddGroup(
     {
         planes = SyAAFAirForcePACAP,
@@ -325,24 +213,29 @@ redCap:AddGroup(
     }
 )
 
+redCap:AddGroup(
+    {
+        planes = SyAAFAirForcePACAP,
+        start = {"Admiral Kuznetsov"}, -- nommer le PA russe 'Admiral Kuznetsov'
+        objectif = "Cairo International Airport",
+        name = "Bravo",
+        toPA = true,
+        blockIfRed = "Melez",
+    }
+)
 
 redCap:AddGroup(
     {
         planes = SyAAFAirForceCAP,
-        start = {"Abu Rudeis", "St Catherine" },
-        objectif = "Ovda",
-        name = "Hotel",
-        minPlayer =  6
+        start = {"Inshas Airbase" },
+        objectif = "Melez",
+        name = "Juliet",
+        blockIfRed = "Melez",
+        minPlayer = 14
     }
 )
 
 redCap:Init()
 
 
-local menu = Menu:New()
-menu:AddMQ9(MQ9)
-menu:AddAutoMQ9(MQ9Auto)
-menu:AddIA(IA)
-menu:AddFrequences()
-menu:Init()
 
