@@ -484,6 +484,7 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
   - RedRespawnTimerMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
   - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
   - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
+  - spawnMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
  - Initialisation : `redCap:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
 #### Appareils disponibles et nom à utiliser : 
