@@ -2,7 +2,9 @@
 
 ## Description
 
-DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore. Le code est encore perfectible avec quelques redondances mais il est suffisamment stable pour être publié. Il est actuellement utilisé pour faire tourner la mission Sinai des serveurs public Couteau et privé Ghost
+DCS Simplify Mission (DSM) est un ensemble de scripts conçus pour faciliter la création de missions de type conquête avec persistance, capture de base, CAP adaptatives, Reconnaissance de cible, Bombardement de base et plus encore. Le code est encore perfectible avec quelques redondances mais il est suffisamment stable pour être publié. Il est actuellement utilisé pour faire tourner la mission Sinai des serveurs public Couteau et privé Ghost.
+
+Les scripts se basent en grande partie sur Moose, mais uniquement sur les fonctions de base facilitant l'accès à l'API de DCS, et ce afin de limiter les risques d'avoir des fonctionnalités qui ne seraient plus focntionelles ou qui seraient trop lourde pour un serveur.
 
 DSM se décompose en 2 scripts à charger : le premier (DCSSimplifyMission) contient l'ensemble des class (dont Moose et Mist) qui peuvent être utilisées, le second correspond à la mission en elle-même. 
 L'ensemble des options disponibles sont décrits ci-après, et un exemple d'un script Mission (pour la map Sinai) est disponible dans le dossier /example (il peut être plus facile dans un premier temps de regarder le script).
