@@ -15,7 +15,7 @@ Charger le script DCSSimplifyMission.lua en déclenchement unique sur un temps s
 Charger ensuite votre script de mission sur un second déclencheur à 10s.
 
 ## Unités requises au niveau de l'éditeur
-Il est nécessaire d'ajouter des unités en activation retardées au niveau de l'éditeur et de respecter la syntaxe pour le nom du groupe. Ces groupes seront utilisés pour faire spawn les unités aériennes, au sol et des systèmes de capture : 
+Il est nécessaire d'ajouter des unités en activation retardée au niveau de l'éditeur et de respecter la syntaxe pour le nom du groupe. Ces groupes seront utilisés pour faire spawn les unités aériennes, au sol et des systèmes de capture : 
 
     - MOOSERED : une unité au sol, le type importe peu
     - MLRS : une unité au sol => unité qui spawn à la capture de base, à vous de voir ce que vous voulez mettre 
