@@ -192,7 +192,7 @@ Le groupe va prendre pour cible un point choisi aléatoirement dans la zone auto
 
 #### Utilisation
   - Constructeur : `local artillery = GroundArtillery:New()`
-  - Ajout d'un tacan : `artillery:AddGroundShootIf(unit, airbase)`, avec unit le nom du groupe à contrôler, airbase le nom de la base (tel qu'affiché dans l'éditeur) ciblée. Exemple : `artillery:AddGroundShootIf("Scud1", "Ramon Airbase")` va activer le groupe Scud1 et lui faire cibler la base Ramon Airbase
+  - Ajout d'un groupe : `artillery:AddGroundShootIf(unit, airbase)`, avec unit le nom du groupe à contrôler, airbase le nom de la base (tel qu'affiché dans l'éditeur) ciblée. Exemple : `artillery:AddGroundShootIf("Scud1", "Ramon Airbase")` va activer le groupe Scud1 et lui faire cibler la base Ramon Airbase lorsqu'elle sera bleue
   - Initialisation : `artillery:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
     
 
