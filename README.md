@@ -482,11 +482,12 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
   - toPA : facultatif, false par défaut. A mettre à true si le groupe slot sur le porte avion (et dans ce cas, le nom de la base de départ doit etre le nom du porte avion)
   - blockIfBlue : (facultatif) nom de la base qui doit être bleue pour empêcher la CAP de décoller
   - blockIfRed : (facultatif) nom de la base qui doit être red pour empêcher la CAP de décoller
-  - RedRespawnTimerMin : (facultatif) durée min en seconde avant le prochain slot d'un même groupe (par défaut 900)
-  - RedRespawnTimerMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
+  - spawnMin : (facultatif) durée min en seconde avant le prochain slot d'un même groupe (par défaut 900)
+  - spawnMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
   - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
   - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
-  - spawnMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
+  - spawnCountMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
+  - activeOnBuilding : disponible depuis la v1.2 : indique si la CAP est déclenché via la class BuildingControl (true/false, false par défaut)
  - Initialisation : `redCap:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
 #### Appareils disponibles et nom à utiliser : 
@@ -547,6 +548,34 @@ Certaines fonctions du mode Zeus peuvent être utilisées plus facilement via le
 
 #### Utilisation In Game
 Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décrit ici [ZeusReadme](./ZeusReadme.md) (un merci à xMiniKuT pour le design des FOB)
+
+#### Spawn de FOB par script avec persistance
+Depuis la version 1.2 il est possible d'utiliser Zeus dans le script mission pour faire spawn des FOB sur une zone : 
+ - ExcludePersistance doit être défini
+ - `:SpawnWithPersistance(obj)` permet de faire spawn au démarrage de la mission une FOB, avec obj :
+  - name : le nom de la FOB dans Zeus
+  - zoneName : le nom d ela zone dans l'éditeur
+  - exemple : `Zeus:SpawnWithPersistance({name = "LARGEFOB1", zoneName = "testZoneStatic"})`
+
+
+### Class BuildingControl
+Disponible depus la v1.2. Cette class permet de déclencher des actions lorsqu'un batiment de la map est détruit. Pour cela côté éditeur, il faut faire un clic droit > assigné comme sur le batiment voulu et récupérr l'ID qui est donné dans la description de la zone créée. 
+#### Utilisation 
+ - Constructeur : `local buildingControle = BuildingControl:New()`
+ - `:AddBuildingAction(obj)` : Ajout d'une action suite à la destruction d'un ou plusieurs batiment. Avec obj :
+  - ids : (obligatoire) une liste des ID correspondant aux batiements devant être détruit pour déclencher l'action (ex : ids = {"80633923", "80633914"} ou ids = {"80633923"} ), si plusieurs ID alors l'action ne sera réalisée qu'une fois l'ensemble des batiments détruits
+  - type : le type d'action à réalisée : "ground", "cap", ou "groundAndCAP". En fonction du type, les actions déclenchées sont différentes :
+    - ground => inactivation du group "groundGroup" (Radar off + interdictoin de tirer)
+    - cap => autorise le spawn de la CAP "capGroup"
+    - groundAndCAP => ground + cap 
+  - groundGroup : (obligatoire si type = ground ou groundCAP) nom du groupe dans l'éditeur à inactiver
+  - capGroup : (obligatoire si type = cap ou groundCAP) nom du group CAP, au niveau de la class CAP (cette dernière doit avoir l'attribut activeOnBuilding à true)
+  - message : (optionnel) message affiché lors de la destruction des batiments
+  - actionDuring : (optionnel) temps en minute avant de réactiver le groupe groundGroup (si type = ground ou groundCAP)
+  - messageReactivation : (optionnel) message affiché lors de la réactivation du groupe groundGroup (si type = ground ou groundCAP)
+ - Initialisation : `buildingControle:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
+   
+
 
 	
 
