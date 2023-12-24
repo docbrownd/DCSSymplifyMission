@@ -564,16 +564,16 @@ Disponible depus la v1.2. Cette class permet de déclencher des actions lorsqu'u
 #### Utilisation 
  - Constructeur : `local buildingControle = BuildingControl:New()`
  - `:AddBuildingAction(obj)` : Ajout d'une action suite à la destruction d'un ou plusieurs batiment. Avec obj :
-  - ids : (obligatoire) une liste des ID correspondant aux batiements devant être détruit pour déclencher l'action (ex : ids = {"80633923", "80633914"} ou ids = {"80633923"} ), si plusieurs ID alors l'action ne sera réalisée qu'une fois l'ensemble des batiments détruits
-  - type : le type d'action à réalisée : "ground", "cap", ou "groundAndCAP". En fonction du type, les actions déclenchées sont différentes :
-    - ground => inactivation du group "groundGroup" (Radar off + interdictoin de tirer)
-    - cap => autorise le spawn de la CAP "capGroup"
-    - groundAndCAP => ground + cap 
-  - groundGroup : (obligatoire si type = ground ou groundCAP) nom du groupe dans l'éditeur à inactiver
-  - capGroup : (obligatoire si type = cap ou groundCAP) nom du group CAP, au niveau de la class CAP (cette dernière doit avoir l'attribut activeOnBuilding à true)
-  - message : (optionnel) message affiché lors de la destruction des batiments
-  - actionDuring : (optionnel) temps en minute avant de réactiver le groupe groundGroup (si type = ground ou groundCAP)
-  - messageReactivation : (optionnel) message affiché lors de la réactivation du groupe groundGroup (si type = ground ou groundCAP)
+   - ids : (obligatoire) une liste des ID correspondant aux batiements devant être détruit pour déclencher l'action (ex : ids = {"80633923", "80633914"} ou ids = {"80633923"} ), si plusieurs ID alors l'action ne sera réalisée qu'une fois l'ensemble des batiments détruits
+   - type : le type d'action à réalisée : "ground", "cap", ou "groundAndCAP". En fonction du type, les actions déclenchées sont différentes :
+     - ground => inactivation du group "groundGroup" (Radar off + interdictoin de tirer)
+     - cap => autorise le spawn de la CAP "capGroup"
+     - groundAndCAP => ground + cap 
+   - groundGroup : (obligatoire si type = ground ou groundCAP) nom du groupe dans l'éditeur à inactiver
+   - capGroup : (obligatoire si type = cap ou groundCAP) nom du group CAP, au niveau de la class CAP (cette dernière doit avoir l'attribut activeOnBuilding à true)
+   - message : (optionnel) message affiché lors de la destruction des batiments
+   - actionDuring : (optionnel) temps en minute avant de réactiver le groupe groundGroup (si type = ground ou groundCAP)
+   - messageReactivation : (optionnel) message affiché lors de la réactivation du groupe groundGroup (si type = ground ou groundCAP)
  - Initialisation : `buildingControle:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
    
 
