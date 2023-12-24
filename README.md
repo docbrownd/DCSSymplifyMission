@@ -554,9 +554,9 @@ Le mode Zeus permet d'ajouter de nombreuses unités, son comportement est décri
 Depuis la version 1.2 il est possible d'utiliser Zeus dans le script mission pour faire spawn des FOB sur une zone : 
  - ExcludePersistance doit être défini
  - `:SpawnWithPersistance(obj)` permet de faire spawn au démarrage de la mission une FOB, avec obj :
-   - name : le nom de la FOB dans Zeus
-   - zoneName : le nom d ela zone dans l'éditeur
-   - exemple : `Zeus:SpawnWithPersistance({name = "LARGEFOB1", zoneName = "testZoneStatic"})`
+    - name : le nom de la FOB dans Zeus
+    - zoneName : le nom d ela zone dans l'éditeur
+    - exemple : `Zeus:SpawnWithPersistance({name = "LARGEFOB1", zoneName = "testZoneStatic"})`
 
 
 ### Class BuildingControl
