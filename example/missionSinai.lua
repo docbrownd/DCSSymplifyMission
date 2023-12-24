@@ -98,10 +98,10 @@ local awacs1 = AwacsIA:New({
     callsign = {name = "Darkstar", groupeNumber = 1}, 
     takeOffFrom = "Ben-Gurion",
     startTo = "awacs-1",
-    progression = { -- last position in first !
-        {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
-        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
-    }
+    -- progression = { -- last position in first !
+    --     {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
+    --     {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
+    -- }
 })
 
 
@@ -114,10 +114,10 @@ local tanker1 = TankerIA:New({
     callsign = {name = "Shell", groupeNumber = 1}, 
     takeOffFrom = "Ben-Gurion",
     startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
-    progression = {
-        {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
-        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
-    }
+    -- progression = {
+    --     {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
+    --     {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
+    -- }
 })
 
 
@@ -130,10 +130,10 @@ local tanker2 = TankerIA:New({
     callsign = {name = "Texaco", groupeNumber = 1}, 
     takeOffFrom = "Ben-Gurion",
     startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
-    progression = {
-        {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
-        {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
-    }
+    -- progression = {
+    --     {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
+    --     {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
+    -- }
 })
 
 -- just for message informations
