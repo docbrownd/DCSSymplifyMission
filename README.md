@@ -487,7 +487,8 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
   - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
   - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
   - spawnCountMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
-  - activeOnBuilding : disponible depuis la v1.2 : indique si la CAP est déclenché via la class BuildingControl (true/false, false par défaut)
+  - activeOnBuilding : disponible depuis la v1.2 : indique si la CAP est déclenché via la class BuildingControl (true/false, false par défaut) (:BuildingControl doit être set)
+ - `:BuildingControl(BuildingControl)` : permet d'injecter la class BuildingControl. Obligatoire si au moins un groupe CAP est lié à cette class
  - Initialisation : `redCap:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
 #### Appareils disponibles et nom à utiliser : 
