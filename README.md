@@ -496,15 +496,15 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
 
 Le paramètre "plane" attend une liste d'avion qui pourront slot, le nom des appareils doit être choisi dans la liste ci-dessous (vous avez également le nom de l'appareil même si c'est généralement compréhensible) :
 
-    - "SyAAF JF-17" : JF-17
-    - "SyAAF Su-30" : Su-30
-    - "SyAAF Su-33" : Su-33
-    - "SyAAF Mig-31" : Mig31
-    - "SyAAF Mig-23" : Mig23
-    - "SyAAF Mig-29A" : Mig29A
-    - "SyAAF Mig-29S" : Mig29S
-    - "SyAAF Mig-21Bis" : Mig21Bis
-    - "SyAAF Mig-25PD" : Mig25PD
+    "SyAAF JF-17" : JF-17
+    "SyAAF Su-30" : Su-30
+    "SyAAF Su-33" : Su-33
+    "SyAAF Mig-31" : Mig31
+    "SyAAF Mig-23" : Mig23
+    "SyAAF Mig-29A" : Mig29A
+    "SyAAF Mig-29S" : Mig29S
+    "SyAAF Mig-21Bis" : Mig21Bis
+    "SyAAF Mig-25PD" : Mig25PD
 
 Comme il s'agit d'un tirage au sort, si un nom est indiquer plusieurs fois dans le paramètre "plane", il aura plus de chance d'être choisi
 
