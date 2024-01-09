@@ -495,6 +495,7 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
 #### Appareils disponibles et nom à utiliser : 
 
 Le paramètre "plane" attend une liste d'avion qui pourront slot, le nom des appareils doit être choisi dans la liste ci-dessous (vous avez également le nom de l'appareil même si c'est généralement compréhensible) :
+
     - "SyAAF JF-17" : JF-17
     - "SyAAF Su-30" : Su-30
     - "SyAAF Su-33" : Su-33
