@@ -346,6 +346,7 @@ La class Tanker ne contient qu'un constructeur qui permet de définir l'ensemble
   - groupNumber : le n° du groupe (premier chiffre des callsign)
 - takeOffFrom : nom de l'aéroport de départ du Tanker
 - startTo : objet décrivant la zone de navigation d'origine, qui se fera entre 2 points A et B. Ces points sont définis via des zones de déclenchement au niveau de l'éditeur :
+  - bases : optionnel - liste des bases qui doivent être bleue pour déclencher le spawn 
   - startPosition : nom de la zone de déclenchement A dans l'éditeur
   - endPosition : nom de la zone de déclenchement B dans l'éditeur
 - progression : tableau d'objet. En fonction de la capture des bases, le tanker peut se déplacer sur d'autres zones via le déclencheur, il est possible de saisir autant de progression que souhaitées, l'ordre est en revanche important : il faut indiquer les dernières zones de déplacement au début
