@@ -476,19 +476,19 @@ La CAP est adaptative en fonction du nombre de joueur connecté, chaque groupe e
 #### Utilisation
  - Constructeur : `local redCap = CAP:New()`
  - `:AddGroup(obj)`  : ajoute un groupe CAP, avec obj comme suit :
-  - planes : (obligatoire) une liste contenant le nom des templates des avions à tirer au sort (voir ci-dessous)
-  - start : (obligatoire) une liste de base de départ : si la première est capturée, la base d'après sera utilisée, en absence de base disponible, le groupe n'apparaitra pas
-  - objectif : (obligatoire) le nom de la base de destination
-  - name : (obligatoire) le nom du groupe (doit être unique)
-  - toPA : facultatif, false par défaut. A mettre à true si le groupe slot sur le porte avion (et dans ce cas, le nom de la base de départ doit etre le nom du porte avion)
-  - blockIfBlue : (facultatif) nom de la base qui doit être bleue pour empêcher la CAP de décoller
-  - blockIfRed : (facultatif) nom de la base qui doit être red pour empêcher la CAP de décoller
-  - spawnMin : (facultatif) durée min en seconde avant le prochain slot d'un même groupe (par défaut 900)
-  - spawnMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
-  - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
-  - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
-  - spawnCountMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
-  - activeOnBuilding : disponible depuis la v1.2 : indique si la CAP est déclenché via la class BuildingControl (true/false, false par défaut) (:BuildingControl doit être set)
+   - planes : (obligatoire) une liste contenant le nom des templates des avions à tirer au sort (voir ci-dessous)
+   - start : (obligatoire) une liste de base de départ : si la première est capturée, la base d'après sera utilisée, en absence de base disponible, le groupe n'apparaitra pas
+   - objectif : (obligatoire) le nom de la base de destination
+   - name : (obligatoire) le nom du groupe (doit être unique)
+   - toPA : facultatif, false par défaut. A mettre à true si le groupe slot sur le porte avion (et dans ce cas, le nom de la base de départ doit etre le nom du porte avion)
+   - blockIfBlue : (facultatif) nom de la base qui doit être bleue pour empêcher la CAP de décoller
+   - blockIfRed : (facultatif) nom de la base qui doit être red pour empêcher la CAP de décoller
+   - spawnMin : (facultatif) durée min en seconde avant le prochain slot d'un même groupe (par défaut 900)
+   - spawnMax : (facultatif) durée max en seconde avant le prochain slot d'un même groupe (par défaut 1200)
+   - Skill : (facultatif) par défaut sur "Random", choisir entre "Average", "Good", "High", "Excellent" et "Random"
+   - minPlayer : (facultatif) nombre minimal de joueur pour autoriser la CAP à décoller
+   - spawnCountMax : (facultatif) nombre maximal de slot autorisé pour ce groupe CAP. (par défaut -1, slot infini)
+   - activeOnBuilding : disponible depuis la v1.2 : indique si la CAP est déclenché via la class BuildingControl (true/false, false par défaut) (:BuildingControl doit être set)
  - `:BuildingControl(BuildingControl)` : permet d'injecter la class BuildingControl. Obligatoire si au moins un groupe CAP est lié à cette class
  - Initialisation : `redCap:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
