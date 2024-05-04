@@ -143,3 +143,48 @@ Il est possible d'utiliser le menu comm pour faire spawn dans une zone sans avoi
 Il est possible de générer une explosion de la puissance voulue : #explosion_Détonateur_Puissance avec :
  - Détonateur : le temps en seconde avant explosion
  - Puissance : la puissance de l'explosion (entre 1 et l'infini)
+
+## Disponible à partir de la V2
+
+## Supprimer des unités au sol 
+
+La commande #remove va retirer toutes les unités (y compris les static) se trouvant dans un rayon de 1000m
+
+## Spawn de CAP
+
+Il est possible de faire spawn de la CAP Red via l'utilisation de la commande #addC_NomGroupe_Coalition_Nombre  : 
+Avec : 
+- NomGroupe : le type d'appareil (voir ci-après)
+- Coalisaiton : 1 (par dééfaut) = Red, 2 = Blue
+- Nombre : nombre de groupe à faire spawn, sachant qu'un groupe contient toujours 2 appareils 
+
+Voici les noms possibles pour la CAP : 
+- JF17 
+- SU30
+- SU33
+- MIG31 
+- MIG23 
+- MIG29A 
+- MIG29S 
+- MIG21
+- F1
+  
+Exemple pour 4 JF17 RED : #addC_JF17_2_4
+
+## Spawn de FARP (FARP invisible + dépôt carbu + dépôt armement + PC)
+
+Il est possible de faire spawn un FARP complète avec ravitaillement et réarmement possible (+ Tacan si voulu) via la commande #addFOB_NomFARP_FreqTacan_BandTacan
+Avec : 
+- NomFARP : **obligatoirement** à choisir dans les noms de FARP DCS (soit : London, Dallas, Paris, Moscow, Berlin, Rome, Madrid, Warsaw, Dublon, Perth)
+- FreqTacan : non obligatoire mais si présent, un Tacan sera ajouté à la FARP, avec la fréquence donnée
+- BandTacan : X ou Y, obligatoirement si FreqTacan n'est pas vide
+  
+A noter que la FARP aura pour fréquence 126.5 + 1xN, N étant le numéro de la FARP (la première qui slot = 1, la seconde = 2, etc)
+Exemple pour faire slot une FARP "London" sans Tacan : #addFOB_London
+Exemple pour faire slot une FARP "Paris" avec Tacan 20X : #addFOB_London_20_X
+
+La première FARP aura pour fréquence 127.5, la seconde 128.5
+  
+  
+
+
