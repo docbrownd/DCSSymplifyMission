@@ -12,7 +12,7 @@ La class BuildingControl a été revu afin de fonctionner avec des zones et non 
 
 Enfin une class simple de type CTLD a été ajoutée pour déplacer/faire slot des groupes de Manpad/JTAC et déployer des FARP. 
 
-La mission contient les scripts Moose (v2.9.6) et Mist (v4.5.122) en entier, il n'est donc pas nécessaire de les charger si vous les utiliser avec d'autres scripts
+Le script contient les scripts Moose (v2.9.6) et Mist (v4.5.122) en entier, il n'est donc pas nécessaire de les charger si vous les utiliser avec d'autres scripts
 
 ## Description
 
