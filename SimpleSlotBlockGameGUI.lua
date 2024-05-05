@@ -2,7 +2,7 @@ local ssb = {} -- DONT REMOVE!!!
 
 --[[
 
-   Simple Slot Block - V 1.3
+   Simple Slot Block - V 1.5
 
    Put this file in C:/Users/<YOUR USERNAME>/DCS/Scripts for 1.5 or C:/Users/<YOUR USERNAME>/DCS.openalpha/Scripts for 2.0
 
@@ -118,7 +118,6 @@ ssb.prefixes = {
 -- This script will output them when a player changes slots so you can copy them out easily :)
 -- This will only take effect if: ssb.controlNonAircraftSlots = true
 ssb.commanderPlayerUCID = {
-  "292d911c1b6f631476795cb80fd93b1f",
   "some_uniqe_player_ucid",
 }
 
@@ -129,7 +128,7 @@ ssb.permaBlockedPlayerUCID = {
   "another_unique_player_ucid"
 }
 
-ssb.version = "1.3"
+ssb.version = "1.5"
 
 
 -- Logic for determining if player is allowed in a slot
@@ -152,7 +151,6 @@ function ssb.shouldAllowAircraftSlot(_playerID, _slotID) -- _slotID == Unit ID u
   end
 
   _groupName = ssb.trimStr(_groupName)
-
   if not ssb.checkClanSlot(_playerID, _groupName) then
     return false
   end
@@ -161,8 +159,11 @@ function ssb.shouldAllowAircraftSlot(_playerID, _slotID) -- _slotID == Unit ID u
   local _flag = ssb.getFlagValue(_groupName)
 
   if _flag == ssb.enabledFlagValue then
+    net.log("SSB - TRUE " .. _groupName)
     return true
   end
+
+  net.log("SSB - FALSE " .. _groupName)
 
   return false
 
@@ -266,6 +267,17 @@ ssb.onMissionLoadEnd = function()
 
 end
 
+ssb.onSimulationPause = function()
+  local Players = net.get_player_list()
+  if #Players <= 1 then 
+    local endTime = ssb.getFlagValue("AUTORESTART") 
+    if endTime ~= nil and endTime > 0 and endTime <= DCS.getModelTime() then 
+      net.load_mission(DCS.getMissionFilename())
+    end
+  end
+
+end
+
 
 --- For each simulation frame, check if a player needs to be kicked.
 ssb.onSimulationFrame = function()
@@ -282,34 +294,38 @@ ssb.onSimulationFrame = function()
     if DCS.isServer() and DCS.isMultiplayer() then
       if DCS.getModelTime() > 1 and  ssb.slotBlockEnabled() then  -- must check this to prevent a possible CTD by using a_do_script before the game is ready to use a_do_script. -- Source GRIMES :)
 
-        local Players = net.get_player_list()
-        for PlayerIDIndex, playerID in pairs( Players ) do
-
-          -- is player still in a valid slot
-          local _playerDetails = net.get_player_info( playerID )
-
-          if _playerDetails ~=nil and _playerDetails.side ~= 0 and _playerDetails.slot ~= "" and _playerDetails.slot ~= nil then
-
-            local _unitRole = DCS.getUnitType( _playerDetails.slot )
-            if _unitRole ~= nil and
-              ( _unitRole == "forward_observer" or
-              _unitRole == "instructor"or
-              _unitRole == "artillery_commander" or
-              _unitRole == "observer" )
-            then
-              return true
-            end
-
-            local _allow = ssb.shouldAllowAircraftSlot(playerID, _playerDetails.slot)
-
-            if not _allow then
-              ssb.rejectPlayer(playerID)
-              if ssb.kickReset then
-                ssb.allowAircraftSlot(playerID,_playerDetails.slot)
-              end    
-            end
-          end
+        if ssb.getFlagValue("RESTART") == 100 then 
+          net.load_mission(DCS.getMissionFilename())
         end
+
+        -- local Players = net.get_player_list()
+        -- for PlayerIDIndex, playerID in pairs( Players ) do
+
+        --   -- is player still in a valid slot
+        --   local _playerDetails = net.get_player_info( playerID )
+
+        --   if _playerDetails ~=nil and _playerDetails.side ~= 0 and _playerDetails.slot ~= "" and _playerDetails.slot ~= nil then
+
+        --     local _unitRole = DCS.getUnitType( _playerDetails.slot )
+        --     if _unitRole ~= nil and
+        --       ( _unitRole == "forward_observer" or
+        --       _unitRole == "instructor"or
+        --       _unitRole == "artillery_commander" or
+        --       _unitRole == "observer" )
+        --     then
+        --       return true
+        --     end
+
+        --     local _allow = ssb.shouldAllowAircraftSlot(playerID, _playerDetails.slot)
+
+        --     if not _allow then
+        --       ssb.rejectPlayer(playerID)
+        --       if ssb.kickReset then
+        --         ssb.allowAircraftSlot(playerID,_playerDetails.slot)
+        --       end    
+        --     end
+        --   end
+        -- end
       end
     end
   end
@@ -335,6 +351,16 @@ ssb.onPlayerChangeSlot = function(playerID)
 
       if _playerName == nil then
         _playerName = ""
+      end
+
+      if ssb.getFlagValue("NEEDWAIT") == 100 then 
+        if ssb.getFlagValue("FORCEWAIT") ~= 100 then
+          local _chatMessage = string.format("*** %s - Merci d'attendre le démarrage du serveur (~1min) ***",_playerName)
+          net.send_chat_to(_chatMessage, playerID)
+
+          ssb.rejectPlayer(playerID)
+          return
+        end
       end
 
       net.log("SSB - Player Selected slot - player: ".._playerName.." side:"..side.." slot: "..slotID.." ucid: ".._ucid)
@@ -440,3 +466,5 @@ end
 DCS.setUserCallbacks(ssb)
 
 net.log("Loaded - SIMPLE SLOT BLOCK v".. ssb.version.. " by Ciribob")
+
+

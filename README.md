@@ -1,4 +1,17 @@
-# DCS Simplify Mission
+# DCS Simplify Mission V2
+
+**Attention** la version 2 casse la compatibilité avec les scripts mission réalisés sur les versions précédentes. La V2 ajoute plusieurs fonctionnalités et contient d'importante réécriture pour utiliser plus efficacement la POO. Entre autre les class gérant les tankers, awacs, tacan, et PA ont été refaites. Une nouvelle class RedIA apparait pour gérér tout ce qui est lié aux misisons Red, à savoir la recapture de base par convoi/convoi largué par IL76/hélicoptère larguant des manpad, mais aussi des attaques SEAD (SU24M) ou antipiste (TU160). De même la CAP peut maintenant être gérée plus simplement via la class AutoCAP.
+
+Les tankers et l'awacs ont maintenant une course générée automatiquement par le script qui créé une orbit 'reace-track' autour d'un trigger posé dans l'éditeur et avec un range et une inclinaison indiqué par script. Il est maintenant possible d'indiquer une autre base de décollage suivant la progression de la mission.
+
+Le porte avion voit également sa course gérée par script et peut se déplacer en fonction de la progression de la mission. Un S3B peut être ajouté et va orbiter autour d'un des bâtiment du groupe. Il est aussi possible d'ajouter automatiquement des static sur la catapulte 2 pour habiller l'USS Lincoln et Stennis avec des F18.
+
+Pour les missions de type Cold War il est maintenant possible de déployer un gruope JTAC au sol en autolase Laser + IR, sur le meme principe que les MQ9.
+
+La class BuildingControl a été revu afin de fonctionner avec des zones et non des ID, qui changent à chaque MAJ
+
+Enfin une class simple de type CTLD a été ajoutée pour déplacer/faire slot des groupes de Manpad/JTAC et déployer des FARP. 
+
 
 ## Description
 
@@ -13,21 +26,24 @@ L'ensemble des options disponibles sont décrits ci-après, et un exemple d'un s
 
 Charger le script DCSSimplifyMission.lua en déclenchement unique sur un temps supérieur à 1s.
 Charger ensuite votre script de mission sur un second déclencheur à 10s.
+Copier le script SimpleSlotBlockGameGUI sur votre serveur dans Partie enregistrée/DCS/Scripts/Hook (ce script gère le blocage des slots)
 
 ## Unités requises au niveau de l'éditeur
 Il est nécessaire d'ajouter des unités en activation retardée au niveau de l'éditeur et de respecter la syntaxe pour le nom du groupe. Ces groupes seront utilisés pour faire spawn les unités aériennes, au sol et des systèmes de capture : 
 
     - MOOSERED : une unité au sol, le type importe peu
     - MLRS : une unité au sol => unité qui spawn à la capture de base, à vous de voir ce que vous voulez mettre 
-    - MLRS capture : une unité au sol => unité qui spawn dans le cas des captures automatiques (sans C17), à vous de voir ce que vous voulez mettre 
-    - Plane Template : une unité aérienne,  utilisée pour la CAP et les tankers/Awacs, le type importe peu
+    - MLRS capture : une unité au sol => unité qui spawn dans le cas des captures automatiques (sans C17/C130), à vous de voir ce que vous voulez mettre 
+    - Plane Template : une unité aérienne,  utilisée pour la CAP et les tankers/Awacs, le type importe peu mais attention à ****supprimer** toutes les tâches/options que l'appareil aurait pas défaut.
+    - Heli Template : un hélicopter, le type importe peu mais il ne doit pas avoir de tâche/mission
+
     
-Au délà de ces unités obligatoires, il sera nécessaire d'en ajouter (toujours en activation retardée) dans certains cas qui sont décrits plus bas.
+Au delà de ces unités obligatoires, il sera nécessaire d'en ajouter (toujours en activation retardée) dans certains cas qui sont décrits plus bas : notamment pour le groupe qui spawn en cas de recapture de base par les RED et le groupe qui spawn au posé des C17/C130 (généralement un site SAM)
 
 
 ## Principes génériques du script Mission
 
-Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMission doit juste être chargé). Différents modules peuvent être utilisés, certains sont indépendants (ils contiennent une fonction Init()), ainsi il est possible d'utiliser uniquement le mod Zeus au niveau du script Mission.  D'autres modules ne sont qu'une description et doivent être utilisés via des modules plus larges. 
+Le script de mission est à faire pour chaque mission (alors que DCSSimplifyMission doit juste être chargé). Différents modules (class) peuvent être utilisés, certains sont indépendants (ils contiennent une fonction Init()), ainsi il est possible d'utiliser uniquement le mod Zeus au niveau du script Mission.  D'autres modules ne sont qu'une description et doivent être utilisés via des modules plus larges. 
 Les différents modules sont décrits ci-après, tant au niveau du gameplay que pour leur utilisation (au sens 'utilisation dans le script de mission').
 
 
@@ -99,7 +115,7 @@ Ce système permet d'ajouter des marqueurs en vue F10 avec le type et les coordo
   - le joueur doit se poser sur sa base de départ pour pouvoir développer le film ( = ajouter des marqueurs avec nom de l'unité et coordonnées GPS au moment du survol)  
 
 #### Utilisation
-  - Constructeur : `local recon = ReconClass:New(PWS)` : si la class ReconClass est instanciée avec le nom de la class PWS (persistance) utilisée, les marqueurs seront sauvegardés (il faut en plus avoir activé l'écriture dans le fichier de reco, via `:SaveReco()`
+  - Constructeur : `local recon = ReconClass:New(PWS)` : si la class ReconClass est instanciée avec le nom de la class PWS (persistance) utilisée, les marqueurs seront sauvegardés (il faut en plus avoir activé l'écriture dans le fichier de reco, via `:SaveReco()`)
   - Initialisation : `recon:Init()` : tant que cette ligne n'est pas appelée, la reconnaissance ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
 
 #### Options supplémentaires
@@ -110,22 +126,34 @@ La class ReconClass fournit d'autres functions qui vous permet d'ajuster certain
 
 Par défaut la reconnaissance est disponibles pour les appareils suivants : 
 
- - F15-E
+ - F15-C/E
  - F14-B
  - F1
  - M2000
+ - F1-EE/CR
  - F18
  - F16
  - JF17
  - Gazelle SA342M
  - Gazelle SA342L
+ - UH-1H
  - Apache
+ - A-10C/A
+ - AJS37
+ - AV8
+ - C-101CC/C-101EB
+ - F-5E
+ - J-11
+ - L-39C/ZA
+ - Mig-15Bis/19P/29A/29S/29A/29G
+ - SU-25/25T/27/33
+
 
 Il est possible d'ajouter un appareil via `:AddRecoType(obj)`, l'objet doit avoir les attributs suivants : 
  - name : le nom de l'appareil (le nom importe peut, mais il doit être unique)
  - recoType : le type d'appareil pour DCS (exemple pour le F18 : FA-18C_hornet)
    
- - offset : angle en rad pour le calcul de l'offset (par défaut math.rad(83)
+ - offset : angle en rad pour le calcul de l'offset (par défaut math.rad(83))
  - fov : angle en ° du champ de vision du pod, par défaut 70
  - duration : temps en seconde max de la reconnaissance (90s par défaut)
  - minAlt : altitude minimale pour activer l'enregistrement, en m. Par défaut 50
@@ -170,17 +198,24 @@ Par comparaison, par défaut une mk82 à une valeure de 118 alors qu'une mk84 es
 Le script initial vient avec plusieurs configuration qu'il est possible de changer via `:ChangeOption(optionName, optionValue)`
 
 ### Tacan (class TacanBase)
-Cette class permet de faire spawn des Tacan lorsqu'une base est capturée. Le tacan est ajouté à la position (0,0) de la base, soit généralement en bout de piste. 
+Class réécrite en V2
 
-#### Utilisation
+Cette class permet de faire spawn des Tacan lorsqu'une base est capturée. Le tacan est ajouté au bout de la  piste en service, légérement décalé.
+En V2, la class ne fait que charger N Tacn décrit via la class TacanObj
+
+#### class TacanObj
+
+Cette class permet de créer un TACAN : 
+  - Constructeur : `local tacan1 = TacanObj:New(baseName)` : baseName correspond à la base où le tacan devra pop si elle est bleue
+  - `:SetTacanCode("codeTacan")` :  code Tacan qui sera affiché sur les HSI
+  - `:SetFrequency(value)` : fréquence du Tacan
+  - `:SetBand('C)` : bande du Tacan, X ou Y
+
+
+#### Utilisation avec la class TacanBase
   - Constructeur : `local tacan = TacanBase:New()`
-  - Ajout d'un tacan : `local tacan = TacanBase:AddTacan(obj)`, avec obj comme suit :
-   - code : code Tacan qui sera affiché sur les HSI
-   - frequency : fréquence du Tacan
-   - band : bande du Tacan, X ou Y
-   - base : la base liée (tel qu'affiché dans l'éditeur)
-   - Exemple :  `tacan:AddTacan({code = 'HZM', frequency = 95, band = 'X', base = Hatzerim)` pour ajouter un tacan 95X sur la base d'Hatzerim 
-  - Initialisation : `tacan:Init()` : tant que cette ligne n'est pas appelée, la class Tacan ne fonctionnera pas. Cette ligne doit être appelée en dernier
+  - `:SetTacan(tacan1)` : ajoute un tacan tel que décrit dans TacanObj (tacan1 dans notre exemple), à répéter autant de fois que nécessaire
+  - Initialisation : `:Init()` : tant que cette ligne n'est pas appelée, la class Tacan ne fonctionnera pas. Cette ligne doit être appelée en dernier
     
 
 ### Artillerie (class GroundArtillery)
@@ -216,57 +251,19 @@ Concernant la capture de base, pour limiter la charge serveur, les bases ne sont
 
  - base : le nom de la base (tel qu'indiqué dans l'éditeur)
  - baseStart : le nom de la base de départ pour le C17 (tel qu'indiqué dans l'éditeur), attention la base doit être assez grande pour accueillir les C17 
- - plane = "C-17", pour le moment pas d'autres options disponibles
- - groupPop : le nom du groupe qui popera une fois que le C17 sera posé (et uniquement dans ce cas), en règle général un site SAM. Le nom doit correspondre à un groupe en activation retardé au niveau de l'éditeur
+ - plane = "C-17", ou "C-130" 
+ - groupPop : le nom du groupe qui popera une fois que le C17/C130 sera posé (et uniquement dans ce cas), en règle général un site SAM. Le nom doit correspondre à un groupe en activation retardé au niveau de l'éditeur
 
 Exemple : `MyCapture:AddbaseToCapture({base = "Al Mansurah", baseStart = "Ben-Gurion", plane = "C-17", groupPop = "Hawk"})` : Ajoute la base Al Mansurah au système de capture par C17 qui partira de la base de Ben-Gurion et fera pop le groupe Hawk une fois posé
 
 #### Ajouter une base à capturer automatiquement (sans C17)
-`:AddbaseAutoCapture(nom)` permet d'ajouter une base (nom) qui sera capturée sans C17 via le slot de l'unité nommée 'MLRS capture' dans l'éditeur. 
+`:AddbaseAutoCapture(nom, groupName)` : permet d'ajouter une base (nom) qui sera capturée sans C17 via le slot de l'unité nommée 'MLRS capture' dans l'éditeur, ou via le slot de groupName si ce dernier est indiqué. 'Nom' est le seul paramètre obligatoire.
 
 #### Activation de l'artillerie à la capture d'une base 
 `:AddGroundControl(GroundArtillery)` permet, à la capture d'une base, d'activer les unités contrôlées par la class GroundArtillery. 
 
-
-#### Système de recapture de base par convoi ennemi
-Ce système fonctionne en plusieurs parties : 
- - `:RedGroundCaptureGroup({groupe1, groupe2})` : cette fonction permet d'indiquer le nom des groupes qui vont spawn en tant que convoi. Le groupe est choisi aléatoirement dans la liste, donc plus il est présent, plus il a de probabilité d'être choisit. Le groupe peut soit être ajouté dans l'éditeur, soit être choisi dans la liste des convois disponibles : 
-    - heavy : convoi lourdement armé comprenant des Tank, des BTR, des SAM (SA15 et SA9) et une ZSU
-    - sa9 : convoi "heavy" sans SA15
-    - zu : convoi "sa9" sans SA9
-    - armored : convoi "zu" sans la ZSU23
-    - t90 : convoi de 7 T90 et un Ural
-    - t90SA : convoi "t90" avec un SA9 en plus
-    - unArmored : convoi non armé de 9 Ural
-    - scout : convoi comprenant plusieurs Urals, dont certains sont armés
-    - uniq : convoi comportant une seule unité HL_KORD (Ural armé)
-
- - `:RedSpawnCapturegroup({groupe1, groupe2 })` : cette fonction permet d'indiquer quel groupe Red va spawn au niveau de la base capturée, à la place du convoi. Le groupe est choisi aléatoirement dans la liste, et correspond à un groupe ajouté dans l'éditeur en activation retardée
-   
- - `:RedMaxGroundSpawn(obj)` : permet d'ajuster le nombre de convoi autorisés à slot en fonction du nombre de joueur connecté. Obj est un tableau d'objet construit comme suit :
-  	- l'indice du tableau est le nombre de groupe autorisé
-  	- l'objet du tableau contient un attribut min et un attribut max correspondant respectivement au nombre de joueur minimum et maximum pour autoriser le spawn
-  	- exemple pour 3 groupes :
-    `
-  	{
-    		{ min = 3, max = 6, },
-    		{ min = 7, max = 10},
-    		{ min = 11}
-	}
- `
- 
-		- Le premier groupe pourra spawn s'il y a au moins 3 joueurs
-		- Le second groupe s'il y a 7 joueurs
-		- Le dernier groupe s'il y a 11 joueurs
-
- - `:AddRedGroundCaptureBase({start = "baseDépart", destination = "baseDestination" )` permet de spécifier quelle base peut être recapturée par un convoi et d'où il doit partir (le système est à double sens : une base de destination peut devenir la base d'origine). Les bases doivent avoir le même nom que dans l'éditeur. Exemple `MyCapture:AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})` 
- - `:RedGroundSpawnTime(temps_en_seconde)` change le temps minimal (en seconde) entre 2 spawn d'un même groupe. Par défaut 1200
-
-#### Système de recapture de base par convoi aérien
-En plus de la capture par voie terrestre, il est possible pour des bases éloingées de faire spawn un IL76 qui va larguer un convoi à 50Nm d'une base cible. 
-Ce système utilise les fonctions suivantes : 
- - `:RedAirCaptureHQ(obj)` permet d'indiquer de quelles bases l'IL76 peut partir, attention la base doit être assez grande pour permettre son spawn. obj est une liste de base disponible, si la première est capturée, l'IL76 va spawn sur la seconde, et ainsi de suite. Exemple :  `MyCapture:RedAirCaptureHQ({"Cairo International Airport"})`
- - `:AddRedAirCaptureBase("Nom_de_laBase")` : permet d'ajouter une base qui pourra être ciblée par l'IL76. Exemple `MyCapture:AddRedAirCaptureBase("Nevatim")`
+### Recapture Red ###
+Dans la V2, toute la partie de recapture RED a été déplacée dans une nouvelle class 'RedIA'
 
 ### Reaper (class Reaper)
 Il est possible d'ajouter 2 types de drones sur une mission, tout deux seront appelés via le menu communication et apparaitront au niveau d'une base. Ces types de drones diffèrent par leur mission : le premier drone devra être contacté pour avoir des informations sur une cible (mode AFAC), le second scannera la zone est lasera automatiquement les cibles (avec un visuel via fumigène). Les deux drones sont codés via la class Reaper, le drone avec autolase a simplement quelques options en plus.
@@ -303,11 +300,11 @@ Il est possible d'ajouter 2 types de drones sur une mission, tout deux seront ap
 
 ##### Options supplémentaires 
  - `:SetStartFrequency(272)` : indique à partir de quelle fréquence chaque drone doit être contacté. Le drone n°1 sera sur cette fréquence, le n°2 sur la fréqeunce 272+1, etc
- - `:NumberMax(nbr)` : par défaut il est possible d'appeler jusqu'à 8 drones. Cette fonction permet de modifier le nombre (ne pas dépasser 10 pour des raisons d'affichage dans le menu comm)
+ - `:NumberMax(nbr)` : par défaut il est possible d'appeler jusqu'à 8 drones. Cette fonction permet de modifier le nombre (ne pas dépasser 7 pour des raisons de code laser)
 
 
 #### Reaper avec autolase
-Le drone avec autolase a les meme options que le drone classique, sauf qu'il n'est pas nécessaire de la contacter et qu'il a 2 functions supllémentaires pour le lasing : 
+Le drone avec autolase (par défaut laser + IR) a les meme options que le drone classique, sauf qu'il n'est pas nécessaire de la contacter et qu'il a 2 functions suplémentaires pour le lasing : 
  - `:SetStartLaserCode(1681)` : indique la valeur du laser du drone n°1, le second aura +1, le 3eme +2, etc. Attention à bien choisir entre le nombre de drone et les codes autorisés.
  - `:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30})` : décrit la misison du drone : state doit être à true pour que le drone fonctionne, smoke indique si le drone doit ou non marquer sa cible par un fumigène donc la couleur est indiquée par smokeColor (valeur possible red/green/white/orange/blue). La valeur tot indique le temps en minute avant que le drone s'autodétruise
 
@@ -321,77 +318,110 @@ Exemple de code pour un drone avec autolase :
 	MQ9Auto:AutoLase({state = true, smoke = true, smokeColor = "red", tot = 30})
 	MQ9Auto:Init()
 
+#### JTAC via des groupes au sol (class AutoJTACGround)
+
+Pour les missions coldwar (sans MQ9) ou pour le CTLD, il est possible de déployer un JTAC au sol. 
+- Constructeur : `local autoJTAC = AutoJTACGround:New()`
+- `:SetStartLaserCode(1681)` : (optionnel, par défaut 1681) indique la valeur du laser du drone n°1, le second aura +1, le 3eme +2, etc. Attention à bien choisir entre le nombre de drone et les codes autorisés.
+- `:SetZones(menuComm)` : (obligatoire, sauf si ulisation avec CTLD) même fonction que pour le JTAC classique
+- `:Smoke(color)` : (optionnel, par défaut null) indique si la cible doit aussi être marquée par un fumigène (par défaut non). Color doit avoir comme valeur : red, green, white, orange ou blue
+ - `:NumberMax(nbr)`: par défaut il est possible d'appeler jusqu'à 5 groupes. Cette fonction permet de modifier le nombre (ne pas dépasser 7 pour des raisons de code laser)
+
+
 ### Class IA (class IABlue)
-La clas IABlue est au moins aussi complexe que la classe CaptureBase car elle gère elle aussi de multiples systèmes : 
+La class IABlue est au moins aussi complexe que la classe CaptureBase car elle gère elle aussi de multiples systèmes : 
  - les tankers et awacs (qui sont décrits dans leur propre class)
  - les missions de bombardement par B-1B (lui aussi décrit dans sa propre class)
  - le système de reconnaissance par "satellite"
  - l'utilisation des missiles Tomahawk (également décrit dans sa propre class)
 
+Les class Tanker, Awacs et porte avion utilise la class IAprogression pour permettre un déplacement en fonction de la progression de la mission mais aussi pour avoir une course générée automatiquement
+
+De même elles utilisent la class TacanObj qui permet de créer un Tacan. 
+
+#### IAprogression 
+Cette class permet de décrire la course d'un appareil (avion ou porte avion) en fonction de l'état de la mission (des bases capturées) et ajoute une gestion automatique de la course, à partir d'une zone créée dans l'éditeur.
+Exemple : 
+  `local tankers1Progression = {
+    IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
+    IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
+}
+`
+
+Ici on crée un objet tankers1Progression qui contient 2 objets IAprogression. Si les bases "Ovda" et "Nevatim" sont capturées alors letanker utilisera les infos du premier objet IAprogression, sinon se sera le second. 
+
+- Constructeur : `IAprogression:New()`
+- `:SetPosition(zoneName)` : obligatoire.  Indique la zone de l'éditeur autour de laquelle l'appareil va orbiter 
+- `:SetPatternRaceTrack(distance, angle)` : indique que l'appareil doit prendre une orbite de type 'race-track' (possible que pour les avions tanker/awacs), ce type d'orbite évite que le tanker oscille en permanence gauche/droite lorsqu'il va sur un WPT. Distance doit etre en Nm et correspont à la taille de l'orbite. Angle, en degré, correspond à l'inclinaison de l'orbite sur la map. Il vaut 90° par défaut (= pattern horizontal). Pour avoir cette valeur, il suffit sur l'éditeur d'utiliser l'option règle et de noter l'angle donné. Le pattern est en sens horaire, le WPT 1 est à gauche de la zone, le wpt2 à droite
+- `:SetPattern(longueur, largeur, angle)` : meme principe que pour SetPatternRaceTrack mais à utiliser pour le porte avion. Le pattern sera de 6 WPT.  Le pattern est en sens anti-horaire, WPT1 à en bas à droite de la zone.
+ - `:StartPatternAt(nbr)`: (optionnel) permet d'indiquer à partir de quel WPT l'appareil doit commencer. Utile pour le PA
+ - `:SetBases({'base1', 'baseN'})`: (optionnel) Liste des bases qui doivent être capturée pour que les options s'appliquent
+ - `:SetTakeOff(baseName)`: (optionnel) nom de la base d'où l'appareil doit décoller. Pas nécessaire pour les porte avions. Pour les tankers/awacs si l'option n'existe pas, c'est celle de la class AwacsIA/TankerIA qui s'applique. Utile pour faire décoller des avions de plus près une fois certaines bases capturées.
+ 
+
+
+
 
 #### Tankers (class TankerIA)
-La class IA peut gérer des tankers (KC135/KC135MPRS) mais ces derniers doivent être configurés avant via la class TankerIA. Il est possible d'ajouter autant de Tanker ou d'Awacs que voulu. 
+Class réécrite en V2
+La class IA gére les tankers (KC135/KC135MPRS), la class IAGAN gère le S3B, mais ces derniers doivent être configurés avant via la class TankerIA. Il est possible d'ajouter autant de Tanker ou d'Awacs que nécessaire. 
 
 ##### Utilisation
-La class Tanker ne contient qu'un constructeur qui permet de définir l'ensemble des options : `local tanker1 = TankerIA:New({obj})`
- - plane : le type d'avion : KC135 ou KC135MPRS (le KC130 n'est pas disponible)
- - alt : altitude en pieds de l'appareil
- - knot : vitesse en noeuds de l'appareil
- - tacan : objet permettant de définir le tacan de l'appareil :
-  - frequency : frequence du Tacan
-  - band : bande du Tacan (X ou Y)
-  - code : code du tacan
-- callsign : objet décrivant le callsign du tanker :
-  - name : le nom du tanker (attention à prendre les noms compatibles avec les tankers : Shell, Texaco ou Arco)
-  - groupNumber : le n° du groupe (premier chiffre des callsign)
-- takeOffFrom : nom de l'aéroport de départ du Tanker
-- startTo : objet décrivant la zone de navigation d'origine, qui se fera entre 2 points A et B. Ces points sont définis via des zones de déclenchement au niveau de l'éditeur :
-  - bases : optionnel - liste des bases qui doivent être bleue pour déclencher le spawn 
-  - startPosition : nom de la zone de déclenchement A dans l'éditeur
-  - endPosition : nom de la zone de déclenchement B dans l'éditeur
-- progression : tableau d'objet. En fonction de la capture des bases, le tanker peut se déplacer sur d'autres zones via le déclencheur, il est possible de saisir autant de progression que souhaitées, l'ordre est en revanche important : il faut indiquer les dernières zones de déplacement au début
-  - bases : liste des bases qui doivent être bleue pour déclencher la progression
-  - startPosition : nom de la zone de déclenchement A dans l'éditeur
-  - endPosition : nom de la zone de déclenchement A dans l'éditeur
+ - Constructeur : `local tanker1 = TankerIA:New()`
+ - `:SetPlane(planeType)` : le type de tanker : KC135, KC135MPRS ou S3B
+ - `:SetAltitude(altInFeet)` : altitude en pied du tanker
+ - `:SetKnot(speedInKnot)` : vitesse en noeud du tanker
+ - `:SetFrequency(freqInMHz)` : fréquence en MHz pour contacter l'appareil
+ - `:SetTacan(TacanObj)` : Objet tacan de type TacanObj
+ - `:SetCallSignName(tankerCallSign)` : le callsign du tanker, attention à ne prendre que les callsign possible
+ - `:SetCallSignGroup(value)` : le n° de groupe du tanker. 
+ - `:SetTakeOffFrom(baseName)` : la base par défaut d'origine du tanker. Pour les S3B la baseName doit correspondre au nom du pote avion d'où l'avion doit décoller (nom de l'unité et non le nom du groupe)
+ - `:SetProgression({IAprogression})` : les infos de progression pour le tanker via une liste d'objet IAprogression. Pas nécesaire pour le S3B (qui suit son PA)
+
 
 
 Exemple d'un tanker : 
 
-    local tanker1 = TankerIA:New({
-    	plane = "KC135", 
-    	alt = 20000, 
-    	knot = 450, 
-    	frequency = 230, 
-    	tacan = {frequency = 30, band = "X", code = "KC1"}, 
-    	callsign = {name = "Shell", groupeNumber = 1}, 
-    	takeOffFrom = "Ben-Gurion",
-    	startTo = {startPosition = "KC135-1-1", endPosition = "KC135-1-2"},
-    	progression = {
-                {bases = {"Melez", "Abu Rudeis","St Catherine" }, startPosition = "KC135-3-1", endPosition = "KC135-3-2"},
-                {bases = {"Ovda", "Nevatim","Ramon Airbase" }, startPosition = "KC135-2-1", endPosition = "KC135-2-2"}
-    	}
-    })
+  local tankers1Progression = {
+      IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
+      IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
+  }
 
-Ici tanker1 correspondra un KC135 répondant sur la 230MHz avec le callsign Shell11 et un tacan "KC1" en 30X. La tanker partira de Ben Gurion et se positionnera entre les zone "KC135-1-1" et "KC135-1-2" tant qu'aucune base sera capturée. Il volera à une vtesse de 450noeuds à 20k pieds. Il se déplacera sur KC135-2-1 et KC135-2-2 une fois la base Ovda capturée, puis sur KC135-3-1/KC135-3-2 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur KC135-3-1/KC135-3-2
+  local tanker1 = TankerIA:New()
+      :SetPlane("KC135")
+      :SetAltitude(20000)
+      :SetKnot(450)
+      :SetFrequency(230)
+      :SetTacan(TacanObj:New():SetTacanCode("KC1"):SetFrequency(30):SetBand("Y"))
+      :SetCallSignName("Shell")
+      :SetCallSignGroup(1)
+      :SetTakeOffFrom("Ben-Gurion")
+      :SetProgression(tankers1Progression)
+
+Ici tanker1 correspondra un KC135 répondant sur la 230MHz avec le callsign Shell11 et un tacan "KC1" en 30Y. La tanker partira de Ben Gurion et se positionnera autour de la zone KCNord tant qu'aucune base sera capturée. Il volera à une vitesse de 450noeuds à 20k pieds sur un pattern de 50Nm de long, incliné à 160°. Il se déplacera sur KCOuest une fois les bases Ovda et Nevatim capturées.
 
 Le tanker n'est ici que configuré, il faudra l'injecter dans la class IABlue
 
 
 #### Awacs (class AwacsIA)
+Class réécrite en V2
+
 L'AWACS fonctionne de la même manière, il a juste besoin d'une zone de déclenchement pour orbiter (et il n'est pas possible de lui donner une altitude/vitesse ou un tacan). Il faut aussi respecter les callsign possibles pour les Awacs (Darkstar/Overlod par exemple) : 
 
-    local awacs1 = AwacsIA:New({
-        frequency = 280,
-        callsign = {name = "Darkstar", groupeNumber = 1},
-        takeOffFrom = "Ben-Gurion",
-        startTo = "awacs-1",
-        progression = { 
-            {bases = {"Melez", "Abu Rudeis","St Catherine" }, position = "awacs-3"},
-            {bases = {"Ovda", "Nevatim","Ramon Airbase" }, position = "awacs-2"}
-        }
-    })
 
-Ici l'AWACS répondra sur la 230MHz avec le callsign Darkstar11. L'AWACS partira de Ben Gurion et se positionnera en orbite sur la zone awacs-1 tant qu'aucune base sera capturée. Il se déplacera sur awacs-2 une fois la base Ovda capturée, puis sur awacs-3 une fois la base Melez capturée. Si les bases sont capturées dans l'autre sens : Melez puis Ovda, le tanker restera sur awacs-3
+  local AwacsProgression = {
+      IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("AwacsZoneSud"):SetPatternRaceTrack(50, 150),
+      IAprogression:New():SetPosition("AwacsZoneNord"):SetPatternRaceTrack(50),
+  }
+
+  local awacs1 = AwacsIA:New()
+      :SetFrequency(280)
+      :SetCallSignName("Darkstar")
+      :SetCallSignGroup(1)
+      :SetTakeOffFrom("Ben-Gurion")
+      :SetProgression(AwacsProgression)
+
+Ici l'AWACS répondra sur la 280MHz avec le callsign Darkstar11. L'AWACS partira de Ben Gurion et se positionnera en orbite de 50Nm sur une inclinaison de 90° sur la zone AwacsZoneNord tant qu'aucune base sera capturée. Il se déplacera sur AwacsZoneSud une fois les bases Ovda et Nevatim capturées, avec cette fois un pattern de 50N incliné à 150°
 
 Comme pour le tanker, l'AWACS n'est ici que configuré, il faudra l'injecter dans la class IABlue
 
@@ -421,32 +451,52 @@ Les missiles s'utilisent de 2 manières :
  - soit directement via le menu communication pour tirer automatiquement sur les unités présentes au niveau d'une base Demande soutien>Missiles Tomahawk>Sur unités (base)>Nom de la base 
 
 #### Informations PA (class IAGAN)
-Via la class IABlue (et la class Menu) il est possible d'afficher sur demande les informations relatives au PA. Il suffit d'indiquer les informations saisies dans l'éditeur (pour le moment elles ne sont pas récupérées automatiquement) : 
+Class réécrite en V2.
+La class va utliser les objets : 
+ - IAprogression pour avoir une course automatique
+ - IAShip pour configurer chaque porte avion du groupe, la class IAShip utilise notamment la class TacanObj pour gérer le tacan du PA
+ - TankerIA pour le S3B
+
+
+**Attention** : vu que le PA est placé automatiquement par le script, il est en réalité détruit pour reconstruit à l'identique à la bonne position. Cela implique qu'il **ne faut pas** slot dessus tant qu'il ne s'est pas déplacé (en gros attendre 1min) et que les statics qui habillerait le PA ne sont pas reconstruit (sauf ceux gérés par le script)
+
+Exemple d'un groupe avec 4 PA, dont 2 avec un habillage de static, et avec la gestion d'un S3B 
 	
-     local gan = IAGAN:New({
-        groupeName = "Groupe aeronaval", 
-        ships = {
-            {name = "Lincoln", frequency = "127.5MHz" , tacan = "72X", tacanInfos = "LNC", link4 = "336MHz", ICLS = "20"},
-            {name = "Stennis", frequency = "129.5MHz" , tacan = "52X", tacanInfos = "STN", link4 = "316MHz", ICLS = "10"},
-            {name = "Washington", frequency = "128.5MHz" , tacan = "62X", tacanInfos = "WHG", link4 = "326MHz", ICLS = "15"}
-        }
-    })
+  local gan1 = IAGAN:New()
+    :SetGroupName("Groupe aeronaval")
+    :AddShip(IAShip:New():SetName("Tarawa"):SetFrequency(226.5):SetTacan(TacanObj:New():SetTacanCode("TAW"):SetFrequency(26):SetBand("X")):SetICLS(5))
+    :AddShip(IAShip:New():SetName("Lincoln"):SetFrequency(227.5):SetTacan(TacanObj:New():SetTacanCode("LNC"):SetFrequency(27):SetBand("X")):SetLink4(336):SetICLS(10):AddStatic('F18'))
+    :AddShip(IAShip:New():SetName("Stennis"):SetFrequency(228.5):SetTacan(TacanObj:New():SetTacanCode("STN"):SetFrequency(28):SetBand("X")):SetLink4(346):SetICLS(15):AddStatic('F18'))
+    :AddShip(IAShip:New():SetName("Washington"):SetFrequency(229.5):SetTacan(TacanObj:New():SetTacanCode("WAS"):SetFrequency(29):SetBand("X")):SetLink4(356):SetICLS(20))
+    :SetProgression(GANProgression)
+    :AddS3B(S3B)
+    :Init()
 
-Via le menu communication, il sera possible de demander les informations PA, qui afficheront le nom des bâtiments, leur tacan, la fréquence d'appel, ainsi que les fréquences ICLS et Link4
+Ici le groupe au niveau de l'éditeur s'appelle 'Groupe aeronaval' et contient 3 portes avions (appelé 'Lincoln', 'Stennis', 'Washington') + le tarawa ('Tarawa') : 
+ - Le Tarawa répond sur la fréquence 226.5MHz, a pour Tacan 26X 'TAW' et un ICLS sur 5
+ - Le Lincoln répond sur la fréquence 227.5MHz, a pour Tacan 27X 'LNC', un ICLS sur 10 et un link4 sur 336MHz
+ - Le Stennis répond sur la fréquence 228.5MHz, a pour Tacan 28X 'STN', un ICLS sur 15 et un link4 sur 346MHz
+ - Le Washington répond sur la fréquence 229.5MHz, a pour Tacan 29X 'WAS', un ICLS sur 20 et un link4 sur 356MHz
+
+De plus le Lincoln et le Stennis auront des F18 sur la catapulte 2 (pour le moment le code ne gère que des F18 et que pour ces 2 types de bâtiments). L'option :AddStatic n'est pas obligatoire
+
+Un S3B décollera et suivra l'un des bâtiments, en fonction de la valeur contenu dans SetTakeOffFrom (:AddS3B n'est pas obligatoire)
+
+Comme pour les tankers et awacs, SetProgression permet de donner une zone de navigation et une progression (attention à ne pas utiliser SetPatternRaceTrack mais bien StartPatternAt).  
 
 
-La class ne contient pas de fonction Init(), pour fonctionner il faut l'injecter dans la class 
+Via le menu communication, il sera possible de demander les informations PA, qui afficheront le nom des bâtiments, leur tacan, la fréquence d'appel, ainsi que les fréquences ICLS et Link4. Pour cela il faut injecter la class dans la class IABlue
+
 
 #### Utilisation de la class IABlue
  - Constructeur : `local IA = IABlue:New(PWS)` le constructeur a besoin de la class PWS si vous souhaitez utilser le système de reconnaissance manuel
  - `:SetTankers({tanker1, tanker2})` : permet d'injecter les tankers configurés via la class TankerIA
  - `:SetAwacs({awacs1, awacs1})` : permet d'injecter les AWACS configurés via la class AwacsIA
- - `:SetPA(gan)` : permet d'injecter les informations du groupe aéronaval configurées via la class IAGAN
+ - `:SetPA({gan1, gan2, etc})` : permet d'injecter les informations des groupes aéronaval configurés via la class IAGAN. 
  - `:AllowedCruise(tomahawk)` : autorise l'utilisation des Tomahawk, configurés via la class IATomahawk
  - `:AllowedBombing(bombing)` : autorise l'utilisation de B-1B, configurés via la class IABombing
  - `:SetZones(menuZones)` : même système que pour les Drones : cette fonction permet de donner la structure du menu comm (nécesaire pour le bombardement B-1B et Tomahawk)
   - Initialisation : `IA:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée après les éventuelles functions décrites ci-après.
- - 
 
 #### Options supplémentaires 
 
@@ -464,9 +514,10 @@ Cette class permet d'afficher un menu communication nécessaire pour faire appel
  - Constructeur : `local menu = Menu:New()`
  - `:AddMQ9(Reaper)` : injecte un objet Reaper corresopndant au drone classique (MQ9 dans l'exemple ci-dessus)
  - `:AddAutoMQ9(Reaper)` : même chose pour le drone autolase (MQ9Auto dans l'exemple ci-dessus)
+ - `:AddGroundJTAC(jtac)` : même chose pour le gruope JTAC sol en autolase (autoJTAC dans l'exemple ci-dessus)
  - `:AddIA(IABlue)` : injecte un objet IABlue (IA dans l'exemple ci-dessus)
  - `:AddFrequences()` : autorise l'affichage des fréquences PA/Awacs/Tanker via le menu comm
- - Initialisation : `menu:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
+ - Initialisation : `:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
 
 ### CAP (class CAP)
 
@@ -505,6 +556,10 @@ Le paramètre "plane" attend une liste d'avion qui pourront slot, le nom des app
     "SyAAF Mig-29S" : Mig29S
     "SyAAF Mig-21Bis" : Mig21Bis
     "SyAAF Mig-25PD" : Mig25PD
+    "Irak Mig-21Bis" : Mig21Bis version coldwar (armement/livrée)
+    "Irak F1CE" : F1CE version coldwar (armement/livrée)
+    "Irak Mig-29A" : Mig29A version coldwar (armement/livrée)
+
 
 Comme il s'agit d'un tirage au sort, si un nom est indiquer plusieurs fois dans le paramètre "plane", il aura plus de chance d'être choisi
 
@@ -518,7 +573,7 @@ Exemple possible :
     }
     redCap:AddGroup({
         planes = planes,
-        start = {"Inshas Airbase" },
+        start = {"Inshas Airbase"},
         objectif = "Melez",
         name = "Juliet",
         blockIfRed = "Melez",
@@ -527,6 +582,122 @@ Exemple possible :
 
 Ici le groupe Juliet ne décollera que s'il y a au moins 14 joueurs, de la base Inshas Airbase et ira en direction de la base Melez, une fois que cette dernière sera capturée par les bleus.
 
+
+### AutoCAP (class AutoCAP)
+
+#### Fonctionnement In Game
+
+Cette class a été réalisée pour créer une CAP plus simplement : plutot que de devoir réfléchie à l'ensemble des paramètres nécessaires pour avoir une CAP équilibrée, cette class permet d'envoyer de la CAP dès qu'un appareil "joueur" décolle avec pour mission d'aller faire de la CAP vers la base d'où le joueur a décollé. Seul le ratio nombre de joueur versus nombre de **groupe**  de CAP (attention 1 groupe = 2 avions) est à adatpter. La CAP décollera 1 groupe à la fois, à chaque décollage d'un joueur, tant que le radio ne sera pas atteint. La base de décollage est aléatoire, en fonction des bases RED disponibles et de leur distance par rapport à l'objectif : mini 60Nm, max 250. Si aucune base n'est disponible et qu'un PA RED est présent, alors la CAP partira du PA.
+
+#### Utilisation
+
+ - Constructeur : `local autoCap = AutoCAP:New()`
+ - `:InitAirForce(listingCAP)` : (obligatoire) même princpe que pour la CAP : il s'agit du listing des apapareils qui pourront décoller
+ - `:SetRatioBlueRed(Number)` : (obligatoire) le ratio à respecter entre le nombre de joueur bleu et la cap red. Exempel si number = 2, alors l'IA enverra 1 groupe de CAP (soit 2 avoisn) pour 2 joueurs en ligne. A noter que quelque soit la valeur, l'IA envoi forcément un groupe.
+ - `:SetMaxGroup(Number)` : (optionnel) nombre max de gropue RED que l'IA peut avoir en vol en même temps. Par défaut 5 (donc 10 avions)
+ - `:InitCarrier(REDPAGroup)` : (optionnel) nom du PA RED s'il est présent.
+ - `:InitAirForce(listingCAP)` : (optionnel) même princpe que pour InitAirForce : il s'agit du listing des apapareils qui pourront décoller mais cette fois du PA. Obligatoire si InitCarrier présent
+ - Initialisation : `:Init()` : tant que cette ligne n'est pas appelée, la class ne fonctionnera pas. Cette ligne doit être appelée en dernier
+
+
+### Class BuildingControl
+Disponible depus la v1.2. Cette class permet de déclencher des actions lorsqu'un batiment de la map est détruit. Pour cela côté éditeur, il faut faire un clic droit > assigné comme sur le batiment voulu et récupérr le nom de la zone qui est créée. 
+
+#### Utilisation 
+ - Constructeur : `local buildingControle = BuildingControl:New()`
+ - `:AddBuildingAction(obj)` : Ajout d'une action suite à la destruction d'un ou plusieurs batiment. Avec obj :
+   - zones : (obligatoire) une liste des zones correspondant aux batiements devant être détruit pour déclencher l'action, si plusieurs zones alors l'action ne sera réalisée qu'une fois l'ensemble des batiments détruits.
+   - type : le type d'action à réalisée : "ground", "cap", ou "groundAndCAP". En fonction du type, les actions déclenchées sont différentes :
+     - ground => inactivation du group "groundGroup" (Radar off + interdiction de tirer)
+     - cap => autorise le spawn de la CAP "capGroup"
+     - groundAndCAP => ground + cap 
+   - groundGroup : (obligatoire si type = ground ou groundCAP) nom du groupe dans l'éditeur à inactiver
+   - capGroup : (obligatoire si type = cap ou groundCAP) nom du group CAP, au niveau de la class CAP (cette dernière doit avoir l'attribut activeOnBuilding à true)
+   - message : (optionnel) message affiché lors de la destruction des batiments
+   - actionDuring : (optionnel) temps en minute avant de réactiver le groupe groundGroup (si type = ground ou groundCAP)
+   - messageReactivation : (optionnel) message affiché lors de la réactivation du groupe groundGroup (si type = ground ou groundCAP)
+ - Initialisation : `buildingControle:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
+
+
+
+### Mission Red (class RedIA)
+
+Nouveauté de la V2, cette class regroupe la gestion des missions RED. Actuellement il est possible de permettre à l'IA RED de réaliser : 
+- des missions des recaptures de base via le déploiement direct de convoi (souvent entre base proche) ou largué par IL76 (pour des objectifs plus lointains)
+- des missions de drop de MANPAD sur base bleue 
+- des missions de pop d'hélico entre 2 bases RED (sans autre but)
+- des missions SEAD pour attaquer un site SAM sur base bleue
+- des mission antipiste via le tir de 12 KH75 à 70Nm de la base 
+   
+Pour la partie recapture de base, la class a besoin d''une liste des bases de départ/à capturer. Pour cela il faut utiliser la class RedIAPlane pour la partie capture par IL76 et RedConvoiRecapture pour les convois entre 2 bases
+
+#### RedIAPlane 
+  - Constructeur : `local captureAirRed = RedIAPlane:New()` : Le constructeur sans paramètre
+  - `:AddRedAirCaptureBase(baseName)` : à ajouter pour chaque base à capturer par IL76 (le convoi sera largué à 40Nm de la base)
+
+#### RedConvoiRecapture 
+  - Constructeur : `local captureGroundBases = RedConvoiRecapture:New()` : Le constructeur sans paramètre
+  - `:AddRedGroundCaptureBase(obj)` : à ajouter pour chaque base à capturer par convoi. Avec obj : 
+    - start : la base de départ (red)
+    - destination : la base de destination (bleue)
+  - Exemple `:AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})
+ A noter que le système est à double sens : une base de destination peut devenir la base d'origine. Les bases doivent avoir le même nom que dans l'éditeur.
+
+### class RedIA 
+  - Constructeur : `local red = RedIA:New()` : Le constructeur sans paramètre
+  - `:SetHQs({'base1', 'base2'})` : la liste des bases d'où l'IA peut décoller (si la première est capturée, l'IA décolle de la suivante et ainsi de suite)
+  - `:AllowHeliLogistic(min, max)` : autorise la mission "logistic" : un hélicopter décolle et fait la liaison entre 2 bases RED. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission.
+  - `:AllowHeliLogisticManpad(min, max)` : autorise la mission "manpad" : un hélicopter décolle en direction d'une base Bleue pour y déposer des manpad. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission.
+  - `:AllowBomber(min, max)` : autorise la mission de bombardement antipiste : un TU160 décolle en direction d'une base bleue pour tirer 12 missiles KH65 sur le runway. Le TU160 est accompagné de 2 Mig29A armés. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission.
+  - `:AllowSEAD(min, max)` : autorise la mission DEAD : 2 SU24. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission.
+  - `:AllowAirRecapture(min, max, RedIAPlane)` : autorise la mission de recapture via IL76. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission, RedIAPlane correspond à un object RedIAPlane (captureAirRed ici)
+  - `:AllowGroundRedRecapture(min, max, RedConvoiRecapture)` : autorise la mission de recapture par convoi. min et max sont en minute et correspondent à la durée min et max entre 2 spawn de la mission, RedIAPlane correspond à un object RedConvoiRecapture (captureGroundBases ici)
+  - `:RedGroundCaptureGroup({'group1', 'group2'})` : pour les missions de recapture, il s'agit de liste des convoi qui peuvent spawnent. Les groupes disponibles correspondent à ceux indiqué dans la documentation de la class Zeus
+  - `:RedSpawnCapturegroup(grouName)` : pour les missions de recapture, il s'agit du groupe qui sera spawn sur une base à la place du convoi une fois la base capturée. Le groupe doit etre fait dans l'éditeur en activation retardée
+  - `:SetAutoMessage()` : autorise l'affichage d'un message indiquant que l'IA a fait décollé des appareils en mission SEAD/Antipiste. Le message indique uniquement la base d'origine, pas la cible
+  - Initialisation : `:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
+
+Exemple complet (ici il faut faire un groupe 'redGround' dans l'éditeur) : 
+
+    local captureAirRed = RedIAPlane:New()
+        :AddRedAirCaptureBase("Melez")
+        :AddRedAirCaptureBase("Nevatim")
+
+
+    local captureGroundBases = RedConvoiRecapture:New()
+        :AddRedGroundCaptureBase({start = "El Arish", destination = "El Gora"})
+        :AddRedGroundCaptureBase({start = "Bir Hasanah", destination = "Melez"})
+
+    local red = RedIA:New() 
+        :SetHQs({'Cairo International Airport'})
+        :AllowHeliLogisticManpad(10,30)
+        :AllowHeliLogistic(10,15) 
+        :AllowBomber(45,60)
+        :AllowSEAD(30, 45)
+        :AllowAirRecapture(30,40, captureAirRed)
+        :AllowGroundRedRecapture(25, 35, captureGroundBases)
+        :RedGroundCaptureGroup({"unArmored","armored","scout","zu","zu","sa9", "sa9","heavy", "heavy"})
+        :RedSpawnCapturegroup({"redGround"})
+        :SetAutoMessage()
+        :Init()
+
+
+
+### CTLD simplifié  (class CSARCTLD)
+Une version très minimaliste de CTLD a été ajoutée. Elle permet de déployer un groupe de JTAC en autolase et de le déplacer, de déployer/déplacer un gropue de manpad et de fair spawn une FARP. Par défaut le chargement dans l'hélico se faire à proximité d'un static de type 'CV_59_H60'. Il est possiblde de retirer cette obligation. La FARP n'est fonctionnelle que si l'ensemble des blocs ont été déposés suffisamment proche les un des autres
+
+  - Constructeur : `local ctld = CSARCTLD:New(Persistance)` : Le constructeur prend en paramètre la variable contenant la class de Persistance, afin de ne pas sauver les unités qui spawnent 
+  - `:SetJTAC(jactObj)` : permet d'autoriser le spawn de JTAC en Autolase. jtacObj doit faire référence à un object de type AutoJTACGround (voir description plus haut)
+  - `:TurnOffFenwick()` : autorise le chargement d'unité sans être à proximité d'un static CV_59_H60
+  - `:AllowHeli(heliTypeName, obj )` : à mettre pour chaque hélicoptère autorisé à faire du CTLD : 
+    - heliTypeName doit être le nom exacte du type d'appareil dans DCS (exemple pour l'UH1 : UH-1H)
+    - obj contient une liste du type de CTLD autorisé. Pour le moment  : 
+      - 'jtac' : pour le déploiement de JTAC, SetJTAC doit être utilisé
+      - 'manpad' : pour le déploiement de MANPAD
+      - 'fob' : pour la création de FARP
+    - exmple pour l'UH1 avec l'ensemble des options : `:AllowHeli("UH-1H", {'jtac', "manpad", "fob"})`
+  - Initialisation : `:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
+   
 
 ### Mode Zeus (class ZeusMod)
 Il est possible d'ajouter un mod Zeus qui vous permettra de faire spawn des unités au sol comme des SAM, des tanks, des convois ou même des FOB entières rendant le jeu plus dynamique. 
@@ -559,25 +730,6 @@ Depuis la version 1.2 il est possible d'utiliser Zeus dans le script mission pou
     - name : le nom de la FOB dans Zeus
     - zoneName : le nom d ela zone dans l'éditeur
     - exemple : `Zeus:SpawnWithPersistance({name = "LARGEFOB1", zoneName = "testZoneStatic"})`
-
-
-### Class BuildingControl
-Disponible depus la v1.2. Cette class permet de déclencher des actions lorsqu'un batiment de la map est détruit. Pour cela côté éditeur, il faut faire un clic droit > assigné comme sur le batiment voulu et récupérr l'ID qui est donné dans la description de la zone créée. 
-#### Utilisation 
- - Constructeur : `local buildingControle = BuildingControl:New()`
- - `:AddBuildingAction(obj)` : Ajout d'une action suite à la destruction d'un ou plusieurs batiment. Avec obj :
-   - ids : (obligatoire) une liste des ID correspondant aux batiements devant être détruit pour déclencher l'action (ex : ids = {"80633923", "80633914"} ou ids = {"80633923"} ), si plusieurs ID alors l'action ne sera réalisée qu'une fois l'ensemble des batiments détruits
-   - type : le type d'action à réalisée : "ground", "cap", ou "groundAndCAP". En fonction du type, les actions déclenchées sont différentes :
-     - ground => inactivation du group "groundGroup" (Radar off + interdiction de tirer)
-     - cap => autorise le spawn de la CAP "capGroup"
-     - groundAndCAP => ground + cap 
-   - groundGroup : (obligatoire si type = ground ou groundCAP) nom du groupe dans l'éditeur à inactiver
-   - capGroup : (obligatoire si type = cap ou groundCAP) nom du group CAP, au niveau de la class CAP (cette dernière doit avoir l'attribut activeOnBuilding à true)
-   - message : (optionnel) message affiché lors de la destruction des batiments
-   - actionDuring : (optionnel) temps en minute avant de réactiver le groupe groundGroup (si type = ground ou groundCAP)
-   - messageReactivation : (optionnel) message affiché lors de la réactivation du groupe groundGroup (si type = ground ou groundCAP)
- - Initialisation : `buildingControle:Init()` : tant que cette ligne n'est pas appelée, la classe ne fonctionnera pas. Cette ligne doit être appelée en dernier
-   
 
 
 	
