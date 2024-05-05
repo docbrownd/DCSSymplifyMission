@@ -342,11 +342,12 @@ De même elles utilisent la class TacanObj qui permet de créer un Tacan.
 #### IAprogression 
 Cette class permet de décrire la course d'un appareil (avion ou porte avion) en fonction de l'état de la mission (des bases capturées) et ajoute une gestion automatique de la course, à partir d'une zone créée dans l'éditeur.
 Exemple : 
-  `local tankers1Progression = {
-    IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
-    IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
-}
-`
+
+	local tankers1Progression = {
+	    IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
+	    IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
+	}
+
 
 Ici on crée un objet tankers1Progression qui contient 2 objets IAprogression. Si les bases "Ovda" et "Nevatim" sont capturées alors letanker utilisera les infos du premier objet IAprogression, sinon se sera le second. 
 
@@ -382,21 +383,22 @@ La class IA gére les tankers (KC135/KC135MPRS), la class IAGAN gère le S3B, ma
 
 Exemple d'un tanker : 
 
-  local tankers1Progression = {
-      IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
-      IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
-  }
 
-  local tanker1 = TankerIA:New()
-      :SetPlane("KC135")
-      :SetAltitude(20000)
-      :SetKnot(450)
-      :SetFrequency(230)
-      :SetTacan(TacanObj:New():SetTacanCode("KC1"):SetFrequency(30):SetBand("Y"))
-      :SetCallSignName("Shell")
-      :SetCallSignGroup(1)
-      :SetTakeOffFrom("Ben-Gurion")
-      :SetProgression(tankers1Progression)
+	local tankers1Progression = {
+		IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("KCOuest"):SetPatternRaceTrack(50, 160):SetTakeOff("Cairo International Airport"),
+		IAprogression:New():SetPosition("KCNord"):SetPatternRaceTrack(50, 106),
+	}
+
+	local tanker1 = TankerIA:New()
+		:SetPlane("KC135")
+		:SetAltitude(20000)
+		:SetKnot(450)
+		:SetFrequency(230)
+		:SetTacan(TacanObj:New():SetTacanCode("KC1"):SetFrequency(30):SetBand("Y"))
+		:SetCallSignName("Shell")
+		:SetCallSignGroup(1)
+		:SetTakeOffFrom("Ben-Gurion")
+		:SetProgression(tankers1Progression)
 
 Ici tanker1 correspondra un KC135 répondant sur la 230MHz avec le callsign Shell11 et un tacan "KC1" en 30Y. La tanker partira de Ben Gurion et se positionnera autour de la zone KCNord tant qu'aucune base sera capturée. Il volera à une vitesse de 450noeuds à 20k pieds sur un pattern de 50Nm de long, incliné à 160°. Il se déplacera sur KCOuest une fois les bases Ovda et Nevatim capturées.
 
@@ -409,17 +411,17 @@ Class réécrite en V2
 L'AWACS fonctionne de la même manière, il a juste besoin d'une zone de déclenchement pour orbiter (et il n'est pas possible de lui donner une altitude/vitesse ou un tacan). Il faut aussi respecter les callsign possibles pour les Awacs (Darkstar/Overlod par exemple) : 
 
 
-  local AwacsProgression = {
-      IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("AwacsZoneSud"):SetPatternRaceTrack(50, 150),
-      IAprogression:New():SetPosition("AwacsZoneNord"):SetPatternRaceTrack(50),
-  }
-
-  local awacs1 = AwacsIA:New()
-      :SetFrequency(280)
-      :SetCallSignName("Darkstar")
-      :SetCallSignGroup(1)
-      :SetTakeOffFrom("Ben-Gurion")
-      :SetProgression(AwacsProgression)
+	local AwacsProgression = {
+		IAprogression:New():SetBases({"Ovda", "Nevatim"}):SetPosition("AwacsZoneSud"):SetPatternRaceTrack(50, 150),
+		IAprogression:New():SetPosition("AwacsZoneNord"):SetPatternRaceTrack(50),
+	}
+	
+	local awacs1 = AwacsIA:New()
+		:SetFrequency(280)
+		:SetCallSignName("Darkstar")
+		:SetCallSignGroup(1)
+		:SetTakeOffFrom("Ben-Gurion")
+		:SetProgression(AwacsProgression)
 
 Ici l'AWACS répondra sur la 280MHz avec le callsign Darkstar11. L'AWACS partira de Ben Gurion et se positionnera en orbite de 50Nm sur une inclinaison de 90° sur la zone AwacsZoneNord tant qu'aucune base sera capturée. Il se déplacera sur AwacsZoneSud une fois les bases Ovda et Nevatim capturées, avec cette fois un pattern de 50N incliné à 150°
 
@@ -462,15 +464,15 @@ La class va utliser les objets :
 
 Exemple d'un groupe avec 4 PA, dont 2 avec un habillage de static, et avec la gestion d'un S3B 
 	
-  local gan1 = IAGAN:New()
-    :SetGroupName("Groupe aeronaval")
-    :AddShip(IAShip:New():SetName("Tarawa"):SetFrequency(226.5):SetTacan(TacanObj:New():SetTacanCode("TAW"):SetFrequency(26):SetBand("X")):SetICLS(5))
-    :AddShip(IAShip:New():SetName("Lincoln"):SetFrequency(227.5):SetTacan(TacanObj:New():SetTacanCode("LNC"):SetFrequency(27):SetBand("X")):SetLink4(336):SetICLS(10):AddStatic('F18'))
-    :AddShip(IAShip:New():SetName("Stennis"):SetFrequency(228.5):SetTacan(TacanObj:New():SetTacanCode("STN"):SetFrequency(28):SetBand("X")):SetLink4(346):SetICLS(15):AddStatic('F18'))
-    :AddShip(IAShip:New():SetName("Washington"):SetFrequency(229.5):SetTacan(TacanObj:New():SetTacanCode("WAS"):SetFrequency(29):SetBand("X")):SetLink4(356):SetICLS(20))
-    :SetProgression(GANProgression)
-    :AddS3B(S3B)
-    :Init()
+	local gan1 = IAGAN:New()
+		:SetGroupName("Groupe aeronaval")
+		:AddShip(IAShip:New():SetName("Tarawa"):SetFrequency(226.5):SetTacan(TacanObj:New():SetTacanCode("TAW"):SetFrequency(26):SetBand("X")):SetICLS(5))
+		:AddShip(IAShip:New():SetName("Lincoln"):SetFrequency(227.5):SetTacan(TacanObj:New():SetTacanCode("LNC"):SetFrequency(27):SetBand("X")):SetLink4(336):SetICLS(10):AddStatic('F18'))
+		:AddShip(IAShip:New():SetName("Stennis"):SetFrequency(228.5):SetTacan(TacanObj:New():SetTacanCode("STN"):SetFrequency(28):SetBand("X")):SetLink4(346):SetICLS(15):AddStatic('F18'))
+		:AddShip(IAShip:New():SetName("Washington"):SetFrequency(229.5):SetTacan(TacanObj:New():SetTacanCode("WAS"):SetFrequency(29):SetBand("X")):SetLink4(356):SetICLS(20))
+		:SetProgression(GANProgression)
+		:AddS3B(S3B)
+		:Init()
 
 Ici le groupe au niveau de l'éditeur s'appelle 'Groupe aeronaval' et contient 3 portes avions (appelé 'Lincoln', 'Stennis', 'Washington') + le tarawa ('Tarawa') : 
  - Le Tarawa répond sur la fréquence 226.5MHz, a pour Tacan 26X 'TAW' et un ICLS sur 5
